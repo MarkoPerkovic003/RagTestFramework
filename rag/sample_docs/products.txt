@@ -1,0 +1,49 @@
+SYNTAX SYSTEMS GMBH - PRODUKTKATALOG (FIKTIV)
+
+=== SAP-BERATUNGSLEISTUNGEN ===
+
+Produkt: SAP S/4HANA Migration
+Beschreibung: Vollständige Migration von SAP ECC auf SAP S/4HANA inklusive Datenmigration,
+Prozessoptimierung und Change Management.
+Preis: Ab 150.000 Euro je nach Projektumfang
+Projektlaufzeit: 6-18 Monate
+Ansprechpartner: sap-sales@syntax.de
+
+Produkt: SAP BTP Integration
+Beschreibung: Integration von SAP Business Technology Platform mit bestehenden
+On-Premise-Systemen. Unterstützt APIs, iFlows und Event-basierte Architekturen.
+Preis: Ab 50.000 Euro
+Zertifizierungen: SAP Gold Partner
+
+=== CLOUD-DIENSTLEISTUNGEN ===
+
+Produkt: Azure Cloud Migration
+Beschreibung: Lift-and-Shift oder Cloud-native Neuentwicklung auf Microsoft Azure.
+Syntax ist Microsoft Gold Partner.
+Preis: Auf Anfrage, typisch 80.000-500.000 Euro
+SLA: 99,9% Verfügbarkeit für Managed Services
+
+Produkt: Managed Cloud Operations
+Beschreibung: 24/7 Monitoring und Betrieb von Cloud-Infrastrukturen.
+Reaktionszeit bei kritischen Incidents: unter 15 Minuten
+Monatliche Kosten: Ab 5.000 Euro/Monat
+
+=== KI UND DATA ANALYTICS ===
+
+Produkt: KI-Readiness Assessment
+Beschreibung: Bewertung der KI-Reife eines Unternehmens anhand von 5 Dimensionen:
+Datenstrategie, Infrastruktur, Prozesse, Skills und Governance.
+Dauer: 2-4 Wochen
+Preis: 15.000-30.000 Euro
+
+Produkt: RAG-Implementierung
+Beschreibung: Aufbau unternehmenseigener Retrieval-Augmented-Generation-Systeme.
+Anbindung an bestehende Wissensdatenbanken (SharePoint, Confluence, SAP).
+Preis: Ab 80.000 Euro
+Technologie-Stack: Azure OpenAI, LangChain, Azure AI Search
+
+=== SUPPORT UND WARTUNG ===
+
+Support Level 1 (Basic): 8x5 Support, Reaktionszeit 4 Stunden, 200 Euro/Monat
+Support Level 2 (Standard): 8x5 Support, Reaktionszeit 2 Stunden, 500 Euro/Monat
+Support Level 3 (Premium): 24x7 Support, Reaktionszeit 30 Minuten, 1.500 Euro/Monat

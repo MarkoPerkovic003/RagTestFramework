@@ -1,0 +1,57 @@
+SYNTAX SYSTEMS GMBH - TECHNISCHER LEITFADEN (FIKTIV)
+
+=== ONBOARDING-PROZESS ===
+
+Schritt 1: Account-Erstellung
+Neue Mitarbeiter erhalten am ersten Arbeitstag ihre Zugangsdaten per verschlüsselter
+E-Mail. Das temporäre Passwort muss beim ersten Login geändert werden.
+IT-Helpdesk: +49 711 12345-100
+
+Schritt 2: System-Einrichtung
+- Active Directory Account: automatisch erstellt durch HR-System
+- VPN-Client: Cisco AnyConnect, Installer unter software.syntax.de/vpn
+- E-Mail: Microsoft Outlook 365
+- MFA: Microsoft Authenticator App verpflichtend
+
+Schritt 3: Berechtigungsanfragen
+Zusätzliche System-Zugänge werden über das Ticketsystem (tickets.syntax.de) beantragt.
+Genehmigung durch direkten Vorgesetzten erforderlich. Bearbeitungszeit: 1-3 Werktage.
+
+=== NETZWERKARCHITEKTUR ===
+
+Internes Netzwerk: 10.0.0.0/8 (VLAN-segmentiert nach Abteilung)
+DMZ: 172.16.0.0/12 (Webserver, API-Gateways)
+Produktionsnetz: 192.168.1.0/24 (nur für Operations-Team zugänglich)
+
+Firewall-Regeln: Alle ausgehenden Verbindungen auf Port 443 (HTTPS) erlaubt.
+Andere Ports müssen explizit freigegeben werden (Ticket erforderlich).
+
+=== INCIDENT-MANAGEMENT ===
+
+Schweregrad P1 (Kritisch): Vollständiger Systemausfall, alle Kunden betroffen
+- Reaktionszeit: 15 Minuten
+- Eskalation: sofort an CTO (cto@syntax.de) und On-Call-Team
+
+Schweregrad P2 (Hoch): Teilausfall, mehrere Kunden betroffen
+- Reaktionszeit: 1 Stunde
+- Eskalation: nach 2 Stunden an Team Lead
+
+Schweregrad P3 (Mittel): Funktionseinschränkung, einzelne Kunden betroffen
+- Reaktionszeit: 4 Stunden
+- Normale Bearbeitung im Ticketsystem
+
+=== DEPLOYMENT-PROZESS ===
+
+Branch-Strategie: GitFlow (main → develop → feature-branches)
+Code Review: Mindestens 2 Approvals erforderlich
+CI/CD: Azure DevOps Pipelines
+Test-Anforderungen: >80% Code Coverage, alle Unit- und Integrationstests bestanden
+Release-Cadence: Alle 2 Wochen (Sprint-Ende)
+
+=== BACKUP-STRATEGIE ===
+
+Backup-Frequenz: Täglich um 02:00 Uhr (inkrementell), Wöchentlich (vollständig)
+Aufbewahrung: 30 Tage inkrementell, 1 Jahr vollständig
+Backup-Ziel: Azure Blob Storage (geo-redundant, Region: West Europe + North Europe)
+Recovery Time Objective (RTO): 4 Stunden
+Recovery Point Objective (RPO): 24 Stunden

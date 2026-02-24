@@ -1,0 +1,55 @@
+SYNTAX SYSTEMS GMBH - INTERNE UNTERNEHMENSRICHTLINIEN (FIKTIV)
+
+=== DATENSCHUTZRICHTLINIE ===
+
+Abschnitt 1: Grundsätze der Datenverarbeitung
+Die Syntax Systems GmbH verarbeitet personenbezogene Daten ausschließlich auf Basis
+der DSGVO und des Bundesdatenschutzgesetzes (BDSG). Alle Mitarbeiter sind verpflichtet,
+die Datenschutzprinzipien Zweckbindung, Datensparsamkeit und Transparenz einzuhalten.
+
+Abschnitt 2: Zugangsrechte
+Der Zugang zu internen Systemen ist rollenbasiert geregelt. Administratoren haben
+erweiterte Rechte, müssen aber jede privilegierte Aktion im Audit-Log dokumentieren.
+Passwörter müssen mindestens 12 Zeichen enthalten und alle 90 Tage geändert werden.
+
+Abschnitt 3: Meldepflichten
+Datenschutzverletzungen müssen innerhalb von 72 Stunden an den Datenschutzbeauftragten
+gemeldet werden. Der aktuelle Datenschutzbeauftragte ist Max Müller (dsb@syntax.de).
+
+=== IT-SICHERHEITSRICHTLINIE ===
+
+Abschnitt 4: Gerätenutzung
+Alle dienstlichen Geräte müssen mit einer aktuellen Antivirensoftware ausgestattet sein.
+Private USB-Sticks dürfen nicht an Unternehmensgeräte angeschlossen werden.
+VPN-Nutzung ist beim Zugriff aus dem Home-Office verpflichtend.
+
+Abschnitt 5: Software-Updates
+Betriebssystemupdates müssen innerhalb von 14 Tagen nach Veröffentlichung installiert
+werden. Der IT-Helpdesk ist unter helpdesk@syntax.de erreichbar.
+
+Abschnitt 6: Incident Response
+Bei einem Sicherheitsvorfall ist sofort das SIEM-Team (siem@syntax.de) zu informieren.
+Das SIEM-System wertet täglich ca. 500.000 Log-Einträge aus.
+
+=== URLAUBSRICHTLINIE ===
+
+Abschnitt 7: Urlaubsanspruch
+Vollzeitbeschäftigte haben Anspruch auf 30 Urlaubstage pro Kalenderjahr.
+Auszubildende haben Anspruch auf 25 Urlaubstage.
+Nicht genommene Urlaubstage verfallen am 31. März des Folgejahres.
+
+Abschnitt 8: Urlaubsantrag
+Urlaub muss mindestens 2 Wochen im Voraus beim direkten Vorgesetzten beantragt werden.
+Anträge werden über das HR-Portal (hr.syntax.de) eingereicht.
+
+=== HOMEOFFICE-REGELUNG ===
+
+Abschnitt 9: Homeoffice-Tage
+Mitarbeiter können bis zu 3 Tage pro Woche im Homeoffice arbeiten.
+An Montagen und Freitagen gilt eine Präsenzempfehlung.
+Homeoffice-Tage müssen im Kalender als "HO" markiert werden.
+
+Abschnitt 10: Technische Ausstattung
+Das Unternehmen stellt einen Laptop und einen Monitor für den Homeoffice-Arbeitsplatz.
+Internetzugang ist Eigenverantwortung des Mitarbeiters; eine Pauschale von 30 Euro
+monatlich wird als Auslagenersatz gewährt.

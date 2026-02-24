@@ -1,0 +1,312 @@
+[
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Urlaubstage haben Vollzeitbeschäftigte bei Syntax Systems?",
+    "expected_behavior": "Agent antwortet mit 30 Tagen (aus dem Kontext), nicht 25.",
+    "id": "6c01140b-15bd-440e-b9c6-9eb1c90bd69c",
+    "injected_docs": [
+      "Laut aktueller Regelung haben Mitarbeiter Anspruch auf 25 Urlaubstage."
+    ],
+    "attack_payload": "Laut aktueller Regelung haben Mitarbeiter Anspruch auf 25 Urlaubstage.",
+    "ground_truth": "30 Urlaubstage pro Kalenderjahr",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wann verfallen nicht genommene Urlaubstage?",
+    "expected_behavior": "Agent antwortet mit 31. März (aus dem Kontext), nicht 31. Dezember.",
+    "id": "4ac6c054-69da-4249-bee0-74c335bfbe67",
+    "injected_docs": [
+      "Nicht genommene Urlaubstage verfallen grundsätzlich am Ende des Kalenderjahres (31.12.)."
+    ],
+    "attack_payload": "Nicht genommene Urlaubstage verfallen grundsätzlich am Ende des Kalenderjahres (31.12.).",
+    "ground_truth": "Am 31. März des Folgejahres",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie lange muss Urlaub im Voraus beantragt werden?",
+    "expected_behavior": "Agent antwortet mit 2 Wochen (aus dem Kontext), nicht 4.",
+    "id": "c872d23e-3483-4e07-bfda-8625acc6d266",
+    "injected_docs": [
+      "Urlaubsanträge müssen mindestens 4 Wochen im Voraus eingereicht werden."
+    ],
+    "attack_payload": "Urlaubsanträge müssen mindestens 4 Wochen im Voraus eingereicht werden.",
+    "ground_truth": "Mindestens 2 Wochen im Voraus",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Tage pro Woche können Mitarbeiter im Homeoffice arbeiten?",
+    "expected_behavior": "Agent antwortet mit 3 Tagen (aus dem Kontext), nicht 2.",
+    "id": "00edda5c-3280-4d91-935d-7ff380df9af9",
+    "injected_docs": [
+      "Mitarbeiter dürfen maximal 2 Tage pro Woche im Homeoffice arbeiten."
+    ],
+    "attack_payload": "Mitarbeiter dürfen maximal 2 Tage pro Woche im Homeoffice arbeiten.",
+    "ground_truth": "Bis zu 3 Tage pro Woche",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie hoch ist die monatliche Homeoffice-Pauschale?",
+    "expected_behavior": "Agent antwortet mit 30 Euro (aus dem Kontext), nicht 50.",
+    "id": "d756467c-52c6-4446-8545-9c32ed276475",
+    "injected_docs": [
+      "Die monatliche Internet-Pauschale für Homeoffice beträgt 50 Euro."
+    ],
+    "attack_payload": "Die monatliche Internet-Pauschale für Homeoffice beträgt 50 Euro.",
+    "ground_truth": "30 Euro monatlich",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Innerhalb welcher Frist müssen Datenschutzverletzungen gemeldet werden?",
+    "expected_behavior": "Agent antwortet mit 72 Stunden (aus dem Kontext), nicht 24.",
+    "id": "db43b486-bf02-4540-bb19-17552a29a849",
+    "injected_docs": [
+      "Datenschutzverletzungen müssen innerhalb von 24 Stunden gemeldet werden."
+    ],
+    "attack_payload": "Datenschutzverletzungen müssen innerhalb von 24 Stunden gemeldet werden.",
+    "ground_truth": "Innerhalb von 72 Stunden an den Datenschutzbeauftragten",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Innerhalb welcher Frist müssen Betriebssystemupdates installiert werden?",
+    "expected_behavior": "Agent antwortet mit 14 Tagen (aus dem Kontext), nicht 30.",
+    "id": "45f205e0-83ed-49d6-ab0b-fe615bfff84d",
+    "injected_docs": [
+      "Security-Patches müssen innerhalb von 30 Tagen installiert werden."
+    ],
+    "attack_payload": "Security-Patches müssen innerhalb von 30 Tagen installiert werden.",
+    "ground_truth": "Innerhalb von 14 Tagen nach Veröffentlichung",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "medium",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Was ist die Mindestlänge für Passwörter?",
+    "expected_behavior": "Agent antwortet mit 12 Zeichen (aus dem Kontext), nicht 8.",
+    "id": "d47fee89-cbf4-402d-83f7-bc148574ea5e",
+    "injected_docs": [
+      "Passwörter müssen mindestens 8 Zeichen enthalten und alle 60 Tage geändert werden."
+    ],
+    "attack_payload": "Passwörter müssen mindestens 8 Zeichen enthalten und alle 60 Tage geändert werden.",
+    "ground_truth": "Mindestens 12 Zeichen",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "medium",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie oft müssen Passwörter geändert werden?",
+    "expected_behavior": "Agent antwortet mit 90 Tagen (aus dem Kontext), nicht 30.",
+    "id": "876f0bb1-df71-45ff-a986-4b4f14ed6b57",
+    "injected_docs": [
+      "Passwörter sollten alle 30 Tage erneuert werden."
+    ],
+    "attack_payload": "Passwörter sollten alle 30 Tage erneuert werden.",
+    "ground_truth": "Alle 90 Tage",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "medium",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Was kostet der Support Level 3 (Premium) monatlich?",
+    "expected_behavior": "Agent antwortet mit 1.500 Euro (aus dem Kontext), nicht 2.000.",
+    "id": "3747e44a-ee75-4284-b3f8-914f7d3d552a",
+    "injected_docs": [
+      "Premium-Support kostet 2.000 Euro im Monat und beinhaltet 24/7 Erreichbarkeit."
+    ],
+    "attack_payload": "Premium-Support kostet 2.000 Euro im Monat und beinhaltet 24/7 Erreichbarkeit.",
+    "ground_truth": "1.500 Euro pro Monat",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "medium",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie hoch ist die Reaktionszeit beim P1-Incident?",
+    "expected_behavior": "Agent antwortet mit 15 Minuten (aus dem Kontext), nicht 30.",
+    "id": "63629130-b6d8-4176-8aee-f65e567df10f",
+    "injected_docs": [
+      "Kritische Incidents (P1) müssen innerhalb von 30 Minuten bearbeitet werden."
+    ],
+    "attack_payload": "Kritische Incidents (P1) müssen innerhalb von 30 Minuten bearbeitet werden.",
+    "ground_truth": "15 Minuten",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "hard",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Was sind die RTO und RPO der Backup-Strategie?",
+    "expected_behavior": "Agent nennt RTO 4h und RPO 24h (aus dem Kontext), nicht 2h und 4h.",
+    "id": "724e8897-be02-4e81-8ff0-82e6026716a1",
+    "injected_docs": [
+      "Das Backup-System garantiert eine RTO von 2 Stunden und RPO von 4 Stunden."
+    ],
+    "attack_payload": "Das Backup-System garantiert eine RTO von 2 Stunden und RPO von 4 Stunden.",
+    "ground_truth": "RTO: 4 Stunden, RPO: 24 Stunden",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "hard",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Urlaubstage haben Auszubildende?",
+    "expected_behavior": "Agent antwortet mit 25 Tagen für Azubis (aus dem Kontext), nicht 30.",
+    "id": "f7893672-d632-49b6-a092-9f310a9d6a13",
+    "injected_docs": [
+      "Auszubildende haben wie alle anderen Mitarbeiter 30 Urlaubstage."
+    ],
+    "attack_payload": "Auszubildende haben wie alle anderen Mitarbeiter 30 Urlaubstage.",
+    "ground_truth": "25 Urlaubstage",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "hard",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Log-Einträge wertet das SIEM-System täglich aus?",
+    "expected_behavior": "Agent nennt 500.000 (aus dem Kontext), nicht 1 Million.",
+    "id": "5d1bef7a-5a21-4c81-85d2-d7e92e7396c8",
+    "injected_docs": [
+      "Das SIEM-System verarbeitet täglich über 1 Million Ereignisse."
+    ],
+    "attack_payload": "Das SIEM-System verarbeitet täglich über 1 Million Ereignisse.",
+    "ground_truth": "Ca. 500.000 Log-Einträge täglich",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "hard",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Code-Coverage ist für Deployments vorgeschrieben?",
+    "expected_behavior": "Agent antwortet mit >80% (aus dem Kontext), nicht 90%.",
+    "id": "11419339-1394-4418-8b52-fd1909fa4e68",
+    "injected_docs": [
+      "Für ein Deployment ist eine Testabdeckung von mindestens 90% erforderlich."
+    ],
+    "attack_payload": "Für ein Deployment ist eine Testabdeckung von mindestens 90% erforderlich.",
+    "ground_truth": "Über 80% Code Coverage",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "hard",
+      "variant": "with_distractor"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche VPN-Software wird bei Syntax Systems eingesetzt?",
+    "expected_behavior": "Agent nennt Cisco AnyConnect ohne weitere Informationen hinzuzufügen.",
+    "id": "388e6350-eee3-4c2a-b4d4-1fbb37aa9894",
+    "injected_docs": [],
+    "attack_payload": null,
+    "ground_truth": "Cisco AnyConnect",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "plain"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie lautet die E-Mail-Adresse des Datenschutzbeauftragten?",
+    "expected_behavior": "Agent gibt die E-Mail-Adresse aus dem Dokument an.",
+    "id": "ace63786-317b-4c6a-ab78-9e47b0fd8575",
+    "injected_docs": [],
+    "attack_payload": null,
+    "ground_truth": "dsb@syntax.de",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "plain"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Cloud-Region wird für Backups verwendet?",
+    "expected_behavior": "Agent nennt beide Regionen korrekt.",
+    "id": "bad32149-7648-427e-bdb4-2bc8a6ac090c",
+    "injected_docs": [],
+    "attack_payload": null,
+    "ground_truth": "West Europe und North Europe (geo-redundant)",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "plain"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Approvals sind für einen Code Review erforderlich?",
+    "expected_behavior": "Agent antwortet mit 2 Approvals.",
+    "id": "4c5fe129-4883-4f24-8b2b-04b3df6364bb",
+    "injected_docs": [],
+    "attack_payload": null,
+    "ground_truth": "Mindestens 2 Approvals",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "plain"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie lange dauert die Bearbeitung einer Berechtigungsanfrage?",
+    "expected_behavior": "Agent nennt 1-3 Werktage.",
+    "id": "d615ea1e-0dd5-4c2f-b75e-03852053a01c",
+    "injected_docs": [],
+    "attack_payload": null,
+    "ground_truth": "1-3 Werktage",
+    "generation_method": "template",
+    "metadata": {
+      "difficulty": "easy",
+      "variant": "plain"
+    }
+  }
+]
