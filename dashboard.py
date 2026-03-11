@@ -156,18 +156,71 @@ def _strip_ansi(text: str) -> str:
     return _ANSI_RE.sub("", text)
 
 
-def _build_env(agent_url: str, agent_key: str, judge_url: str,
-               judge_key: str, target: str) -> dict[str, str]:
-    """Erstellt ein Umgebungsvariablen-Dict für den subprocess."""
+def _build_env(cfg: dict) -> dict[str, str]:
+    """
+    Erstellt ein Umgebungsvariablen-Dict für den subprocess.
+
+    cfg-Schlüssel (alle optional, je nach Agent-Typ):
+        target, agent_url, agent_key, judge_url, judge_key,
+        azure_deployment, azure_api_version,
+        azure_search_url, azure_search_key, azure_search_index,
+        copilot_secret, copilot_bot_handle,
+        generic_auth_header, generic_answer_field,
+        generic_contexts_field, generic_request_tmpl
+    """
     env = os.environ.copy()
-    env["RAG_TARGET"]          = target
-    env["SYNTAX_AGENT_URL"]    = agent_url
-    env["SYNTAX_AGENT_API_KEY"] = agent_key
+    target = cfg.get("target", "syntax")
+    env["RAG_TARGET"] = target
+
+    # ── Gemeinsame Felder ─────────────────────────────────────────────────
+    url = cfg.get("agent_url", "")
+    key = cfg.get("agent_key", "")
+    if url:
+        env["AGENT_URL"] = url
+    if key:
+        env["AGENT_API_KEY"] = key
+
+    # ── Target-spezifische Felder ─────────────────────────────────────────
+    if target == "syntax":
+        if url: env["SYNTAX_AGENT_URL"]    = url
+        if key: env["SYNTAX_AGENT_API_KEY"] = key
+
+    elif target == "azure":
+        for k, v in [
+            ("AZURE_DEPLOYMENT",   cfg.get("azure_deployment", "")),
+            ("AZURE_API_VERSION",  cfg.get("azure_api_version", "")),
+            ("AZURE_SEARCH_URL",   cfg.get("azure_search_url", "")),
+            ("AZURE_SEARCH_KEY",   cfg.get("azure_search_key", "")),
+            ("AZURE_SEARCH_INDEX", cfg.get("azure_search_index", "")),
+        ]:
+            if v:
+                env[k] = v
+
+    elif target == "copilot":
+        secret = cfg.get("copilot_secret", "")
+        handle = cfg.get("copilot_bot_handle", "")
+        if secret: env["COPILOT_DIRECT_LINE_SECRET"] = secret
+        if handle: env["COPILOT_BOT_HANDLE"]         = handle
+
+    elif target == "generic":
+        for k, v in [
+            ("GENERIC_AUTH_HEADER",    cfg.get("generic_auth_header", "")),
+            ("GENERIC_ANSWER_FIELD",   cfg.get("generic_answer_field", "")),
+            ("GENERIC_CONTEXTS_FIELD", cfg.get("generic_contexts_field", "")),
+            ("GENERIC_REQUEST_TMPL",   cfg.get("generic_request_tmpl", "")),
+        ]:
+            if v:
+                env[k] = v
+
+    # ── Judge ─────────────────────────────────────────────────────────────
+    judge_url = cfg.get("judge_url", "")
+    judge_key = cfg.get("judge_key", "")
     if judge_url:
         env["JUDGE_AGENT_URL"]     = judge_url
-        env["JUDGE_AGENT_API_KEY"] = judge_key or agent_key
+        env["JUDGE_AGENT_API_KEY"] = judge_key or key
     else:
         env.pop("JUDGE_AGENT_URL", None)
+
     return env
 
 
@@ -249,41 +302,72 @@ tab_run, tab_overview, tab_cases, tab_results, tab_analytics, tab_reports = st.t
 with tab_run:
     st.header("Agent konfigurieren & Tests ausführen")
 
+    # ── Agent-Typ-Labels aus Registry laden ───────────────────────────────────
+    try:
+        from rag.agent_registry import labels as _registry_labels
+        _agent_labels: dict[str, str] = _registry_labels()
+    except Exception:
+        _agent_labels = {
+            "syntax":  "Syntax AI Studio",
+            "demo":    "Demo RAG (lokal)",
+            "azure":   "Azure OpenAI",
+            "copilot": "Microsoft Copilot Studio",
+            "generic": "Generic HTTP",
+        }
+
     # ── Session-State initialisieren (einmalig aus config) ────────────────────
-    defaults = {
-        "run_target":    config.RAG_TARGET or "syntax",
-        "run_agent_url": config.SYNTAX_AGENT_URL or "",
-        "run_agent_key": config.SYNTAX_AGENT_API_KEY or "",
-        "run_judge_url": config.JUDGE_AGENT_URL or "",
-        "run_judge_key": config.JUDGE_AGENT_API_KEY or "",
-        "run_category":  "all",
-        "run_limit":     20,
-        "run_judge_q":   True,
-        "last_log":      [],   # list[tuple[str, str, int]] = (label, output, rc)
+    _ss_defaults: dict = {
+        "run_target":             config.RAG_TARGET or "syntax",
+        "run_agent_url":          getattr(config, "SYNTAX_AGENT_URL", ""),
+        "run_agent_key":          getattr(config, "SYNTAX_AGENT_API_KEY", ""),
+        "run_judge_url":          getattr(config, "JUDGE_AGENT_URL", ""),
+        "run_judge_key":          getattr(config, "JUDGE_AGENT_API_KEY", ""),
+        # Azure
+        "az_deployment":          "gpt-4o",
+        "az_api_version":         "2024-02-01",
+        "az_search_url":          "",
+        "az_search_key":          "",
+        "az_search_index":        "",
+        # Copilot
+        "cop_secret":             "",
+        "cop_bot_handle":         "",
+        # Generic HTTP
+        "gen_auth_header":        "Authorization",
+        "gen_answer_field":       "",
+        "gen_contexts_field":     "",
+        "gen_request_tmpl":       "",
+        # Options
+        "run_category":           "all",
+        "run_limit":              20,
+        "run_judge_q":            True,
+        "last_log":               [],
     }
-    for k, v in defaults.items():
+    for k, v in _ss_defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
 
-    # ── Layout: Konfiguration + Optionen nebeneinander ────────────────────────
+    # ── Layout ────────────────────────────────────────────────────────────────
     col_cfg, col_opt = st.columns([3, 2], gap="large")
 
     with col_cfg:
         st.subheader("Ziel-Agent")
 
-        target = st.radio(
-            "Typ",
-            options=["syntax", "demo"],
-            format_func=lambda x: "Syntax AI Studio" if x == "syntax" else "Demo RAG (lokal)",
-            horizontal=True,
+        target = st.selectbox(
+            "Agent-Typ",
+            options=list(_agent_labels.keys()),
+            format_func=lambda x: _agent_labels.get(x, x),
             key="run_target",
         )
 
+        st.divider()
+
+        # ── Typ-spezifische Konfigurationsfelder ──────────────────────────────
         if target == "syntax":
             st.text_input(
                 "Agent-URL",
                 placeholder="https://studio-api.ai.syntax-rnd.com/api/v1/agents/<id>/invoke",
                 key="run_agent_url",
+                help="Vollständige Invoke-URL des Syntax AI Studio Agents",
             )
             st.text_input(
                 "API-Key",
@@ -292,33 +376,103 @@ with tab_run:
                 key="run_agent_key",
             )
 
-            st.divider()
-            st.subheader("Judge-Agent *(optional – Standard: gleicher Agent)*")
-            use_judge = st.checkbox(
-                "Separaten Judge-Agent verwenden",
-                value=bool(st.session_state.run_judge_url),
-                key="_use_judge_checkbox",
+        elif target == "azure":
+            st.text_input(
+                "Azure OpenAI Resource URL",
+                placeholder="https://<resource>.openai.azure.com/",
+                key="run_agent_url",
             )
-            if use_judge:
-                st.text_input(
-                    "Judge-URL",
-                    placeholder="https://studio-api.ai.syntax-rnd.com/api/v1/agents/<judge-id>/invoke",
-                    key="run_judge_url",
-                )
-                st.text_input(
-                    "Judge-API-Key *(leer = Agent-Key)*",
-                    type="password",
-                    key="run_judge_key",
-                )
-            else:
-                st.session_state.run_judge_url = ""
-                st.session_state.run_judge_key = ""
-        else:
+            st.text_input(
+                "Azure API Key",
+                type="password",
+                placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                key="run_agent_key",
+            )
+            c1, c2 = st.columns(2)
+            with c1:
+                st.text_input("Deployment-Name", placeholder="gpt-4o", key="az_deployment")
+            with c2:
+                st.text_input("API-Version", placeholder="2024-02-01", key="az_api_version")
+
+            with st.expander("Azure AI Search (optional – für 'On Your Data')"):
+                st.text_input("Search Endpoint", key="az_search_url",
+                              placeholder="https://<search>.search.windows.net")
+                st.text_input("Search API Key", type="password", key="az_search_key")
+                st.text_input("Index-Name", key="az_search_index")
+
+        elif target == "copilot":
+            st.text_input(
+                "Direct Line Secret",
+                type="password",
+                placeholder="Aus Copilot Studio → Kanäle → Direct Line",
+                key="cop_secret",
+                help="Zu finden in Copilot Studio unter Einstellungen > Kanäle > Direct Line",
+            )
+            st.text_input(
+                "Bot-Handle *(optional – nur für Anzeige)*",
+                key="cop_bot_handle",
+                placeholder="MeinCopilotBot",
+            )
+            st.info(
+                "Direct Line API: POST https://directline.botframework.com/v3/directline/\n\n"
+                "Der Wrapper startet automatisch eine Konversation, sendet die Frage "
+                "und pollt die Antwort."
+            )
+
+        elif target == "generic":
+            st.text_input(
+                "Endpunkt-URL",
+                placeholder="https://my-api.example.com/chat",
+                key="run_agent_url",
+                help="POST-Endpunkt der die Frage als JSON entgegennimmt",
+            )
+            st.text_input(
+                "API-Key",
+                type="password",
+                key="run_agent_key",
+            )
+            with st.expander("Erweiterte Einstellungen"):
+                st.text_input("Auth-Header-Name", key="gen_auth_header",
+                              placeholder="Authorization oder x-api-key")
+                st.text_input("Antwort-Feld (JSON-Pfad)", key="gen_answer_field",
+                              placeholder="output  oder  choices.0.message.content")
+                st.text_input("Kontext-Feld (JSON-Pfad)", key="gen_contexts_field",
+                              placeholder="citations  oder  sourceDocuments")
+                st.text_area("Request-Template (JSON)", key="gen_request_tmpl",
+                             placeholder='{"question": "{{question}}"}',
+                             height=80,
+                             help="Platzhalter {{question}} wird durch die Frage ersetzt")
+
+        elif target == "demo":
             st.info(
                 "Demo RAG nutzt eine lokale ChromaDB-Pipeline mit Claude.\n\n"
                 "Kein API-Key nötig — nur `ANTHROPIC_API_KEY` in der .env."
             )
-            st.session_state.run_agent_url = ""
+
+        # ── Judge-Agent (gemeinsam für alle Typen) ────────────────────────────
+        st.divider()
+        st.subheader("Judge-Agent *(optional)*")
+        st.caption("Standard: Claude Opus via Anthropic API. Separaten Syntax-Agent als Judge nutzen?")
+
+        use_judge = st.checkbox(
+            "Separaten Judge-Agent konfigurieren",
+            value=bool(st.session_state.run_judge_url),
+            key="_use_judge_chk",
+        )
+        if use_judge:
+            st.text_input(
+                "Judge-URL",
+                placeholder="https://studio-api.ai.syntax-rnd.com/api/v1/agents/<judge-id>/invoke",
+                key="run_judge_url",
+            )
+            st.text_input(
+                "Judge-API-Key *(leer = Agent-Key)*",
+                type="password",
+                key="run_judge_key",
+            )
+        else:
+            st.session_state["run_judge_url"] = ""
+            st.session_state["run_judge_key"] = ""
 
     with col_opt:
         st.subheader("Test-Optionen")
@@ -335,7 +489,7 @@ with tab_run:
             "Limit pro Kategorie",
             min_value=1, max_value=500, step=5,
             key="run_limit",
-            help="Anzahl der Tests pro Kategorie (Empfehlung: 20 für schnellen Test, 0 für alle)",
+            help="Anzahl der Tests pro Kategorie (Empfehlung: 20 für schnellen Test)",
         )
 
         st.checkbox(
@@ -345,8 +499,17 @@ with tab_run:
         )
 
         st.divider()
-        st.subheader("Schnellstart")
-        st.caption("Nur Test-Ausführung + Evaluation, keine neue Testfall-Generierung.")
+
+        # ── Kurzinfo zum ausgewählten Agent ───────────────────────────────────
+        st.subheader("Agent-Info")
+        agent_info = {
+            "syntax":  "**Syntax AI Studio** – GenAI Agent Platform\nAuth: `x-api-key` Header",
+            "demo":    "**Demo RAG** – Lokale LangChain + ChromaDB Pipeline\nKein Remote-Aufruf",
+            "azure":   "**Azure OpenAI** – Chat Completions API\nOptional: Azure AI Search ('On Your Data')",
+            "copilot": "**Microsoft Copilot Studio** – Direct Line API v3\nPolling für Bot-Antworten",
+            "generic": "**Generic HTTP** – Beliebige REST-Endpoints\nAuto-Erkennung von Antwort-Feldern",
+        }
+        st.info(agent_info.get(target, f"Agent-Typ: **{target}**"))
 
     # ── Aktions-Buttons ───────────────────────────────────────────────────────
     st.divider()
@@ -354,7 +517,7 @@ with tab_run:
 
     with btn_col1:
         run_clicked = st.button(
-            "▶ Tests ausführen",
+            "▶  Tests ausführen",
             type="primary",
             use_container_width=True,
             help="Führt run → evaluate → report in einem Schritt aus",
@@ -362,40 +525,80 @@ with tab_run:
 
     with btn_col2:
         save_clicked = st.button(
-            "💾 In .env speichern",
+            "💾  In .env speichern",
             use_container_width=True,
             help="Speichert die aktuelle Konfiguration dauerhaft in der .env-Datei",
         )
 
     with btn_col3:
         ping_clicked = st.button(
-            "🔌 Verbindung testen (ping)",
+            "🔌  Verbindung testen (ping)",
             use_container_width=True,
         )
 
+    # ── Aktuelle Konfiguration in ein cfg-Dict packen ─────────────────────────
+    def _current_cfg() -> dict:
+        ss = st.session_state
+        return {
+            "target":               ss.run_target,
+            "agent_url":            ss.run_agent_url,
+            "agent_key":            ss.run_agent_key,
+            "judge_url":            ss.run_judge_url,
+            "judge_key":            ss.run_judge_key,
+            "azure_deployment":     ss.az_deployment,
+            "azure_api_version":    ss.az_api_version,
+            "azure_search_url":     ss.az_search_url,
+            "azure_search_key":     ss.az_search_key,
+            "azure_search_index":   ss.az_search_index,
+            "copilot_secret":       ss.cop_secret,
+            "copilot_bot_handle":   ss.cop_bot_handle,
+            "generic_auth_header":  ss.gen_auth_header,
+            "generic_answer_field": ss.gen_answer_field,
+            "generic_contexts_field": ss.gen_contexts_field,
+            "generic_request_tmpl": ss.gen_request_tmpl,
+        }
+
     # ── In .env speichern ─────────────────────────────────────────────────────
     if save_clicked:
-        updates = {
-            "RAG_TARGET":           st.session_state.run_target,
-            "SYNTAX_AGENT_API_KEY": st.session_state.run_agent_key,
-        }
-        if st.session_state.run_agent_url:
-            updates["SYNTAX_AGENT_URL"] = st.session_state.run_agent_url
-        if st.session_state.run_judge_url:
-            updates["JUDGE_AGENT_URL"]     = st.session_state.run_judge_url
-            updates["JUDGE_AGENT_API_KEY"] = st.session_state.run_judge_key or st.session_state.run_agent_key
+        cfg = _current_cfg()
+        updates: dict[str, str] = {"RAG_TARGET": cfg["target"]}
+        if cfg["agent_url"]:  updates["AGENT_URL"]    = cfg["agent_url"]
+        if cfg["agent_key"]:  updates["AGENT_API_KEY"] = cfg["agent_key"]
+
+        if cfg["target"] == "syntax":
+            if cfg["agent_url"]: updates["SYNTAX_AGENT_URL"]     = cfg["agent_url"]
+            if cfg["agent_key"]: updates["SYNTAX_AGENT_API_KEY"]  = cfg["agent_key"]
+        elif cfg["target"] == "azure":
+            for k, v in [
+                ("AZURE_DEPLOYMENT",   cfg["azure_deployment"]),
+                ("AZURE_API_VERSION",  cfg["azure_api_version"]),
+                ("AZURE_SEARCH_URL",   cfg["azure_search_url"]),
+                ("AZURE_SEARCH_KEY",   cfg["azure_search_key"]),
+                ("AZURE_SEARCH_INDEX", cfg["azure_search_index"]),
+            ]:
+                if v: updates[k] = v
+        elif cfg["target"] == "copilot":
+            if cfg["copilot_secret"]:     updates["COPILOT_DIRECT_LINE_SECRET"] = cfg["copilot_secret"]
+            if cfg["copilot_bot_handle"]: updates["COPILOT_BOT_HANDLE"]         = cfg["copilot_bot_handle"]
+        elif cfg["target"] == "generic":
+            for k, v in [
+                ("GENERIC_AUTH_HEADER",    cfg["generic_auth_header"]),
+                ("GENERIC_ANSWER_FIELD",   cfg["generic_answer_field"]),
+                ("GENERIC_CONTEXTS_FIELD", cfg["generic_contexts_field"]),
+                ("GENERIC_REQUEST_TMPL",   cfg["generic_request_tmpl"]),
+            ]:
+                if v: updates[k] = v
+
+        if cfg["judge_url"]:
+            updates["JUDGE_AGENT_URL"]     = cfg["judge_url"]
+            updates["JUDGE_AGENT_API_KEY"] = cfg["judge_key"] or cfg["agent_key"]
+
         _save_to_env(updates)
         st.success("Konfiguration in .env gespeichert.")
 
     # ── Ping ──────────────────────────────────────────────────────────────────
     if ping_clicked:
-        env = _build_env(
-            st.session_state.run_agent_url,
-            st.session_state.run_agent_key,
-            st.session_state.run_judge_url,
-            st.session_state.run_judge_key,
-            st.session_state.run_target,
-        )
+        env = _build_env(_current_cfg())
         with st.spinner("Verbinde mit Agent..."):
             rc, out = _run_step(["ping"], env)
         if rc == 0:
@@ -407,22 +610,20 @@ with tab_run:
 
     # ── Tests ausführen ───────────────────────────────────────────────────────
     if run_clicked:
+        cfg = _current_cfg()
         # Validierung
-        if st.session_state.run_target == "syntax" and not st.session_state.run_agent_key:
+        needs_key = cfg["target"] in ("syntax", "azure", "generic")
+        needs_copilot_secret = cfg["target"] == "copilot"
+        if needs_key and not cfg["agent_key"]:
             st.error("Bitte einen API-Key eingeben.")
             st.stop()
+        if needs_copilot_secret and not cfg["copilot_secret"]:
+            st.error("Bitte den Direct Line Secret eingeben.")
+            st.stop()
 
-        env = _build_env(
-            st.session_state.run_agent_url,
-            st.session_state.run_agent_key,
-            st.session_state.run_judge_url,
-            st.session_state.run_judge_key,
-            st.session_state.run_target,
-        )
-
+        env = _build_env(cfg)
         log: list[tuple[str, str, int]] = []
 
-        # Schritt 1: run
         run_args = [
             "run",
             "--category", st.session_state.run_category,
@@ -432,7 +633,6 @@ with tab_run:
             rc1, out1 = _run_step(run_args, env)
         log.append(("run", out1, rc1))
 
-        # Schritt 2: evaluate
         eval_args = [
             "evaluate",
             "--judge-quality" if st.session_state.run_judge_q else "--no-judge-quality",
@@ -441,14 +641,11 @@ with tab_run:
             rc2, out2 = _run_step(eval_args, env)
         log.append(("evaluate", out2, rc2))
 
-        # Schritt 3: report
         with st.spinner("Schritt 3/3 – Report wird erstellt..."):
             rc3, out3 = _run_step(["report", "--format", "both"], env)
         log.append(("report", out3, rc3))
 
         st.session_state.last_log = log
-
-        # Cache leeren damit Übersicht + Analytics aktualisiert werden
         st.cache_data.clear()
 
     # ── Ergebnis-Zusammenfassung ──────────────────────────────────────────────

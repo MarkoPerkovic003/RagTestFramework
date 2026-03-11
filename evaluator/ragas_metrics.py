@@ -159,16 +159,20 @@ class RAGASEvaluator:
 def evaluate_with_judge(
     rag_results: list[RAGResult],
     judge: Any,
+    ground_truths: list[str | None] | None = None,
 ) -> RAGASResult:
     """
-    Berechnet Qualitätsmetriken via LLM-Judge als Fallback für fehlende RAGAS-Werte.
+    Berechnet Qualitätsmetriken via LLM-Judge.
 
-    Normalisiert Judge-Scores (0-10) auf RAGAS-Skala (0-1).
-    Gibt RAGASResult mit faithfulness und answer_relevancy zurück.
+    Nutzt ground_truth als Referenzantwort wenn kein Kontext vorhanden ist
+    (z.B. Syntax AI Studio Agent ohne Retrieval-Logging). Normalisiert
+    Judge-Scores (0-10) auf RAGAS-Skala (0-1).
 
     Args:
-        rag_results: RAG-Ergebnisse (question + answer, contexts optional).
-        judge:       Initialisierter LLMJudge.
+        rag_results:   RAG-Ergebnisse (question + answer, contexts optional).
+        judge:         Initialisierter LLMJudge.
+        ground_truths: Bekannte korrekte Antworten je Testfall (optional).
+                       Wird als Referenz genutzt wenn contexts leer sind.
 
     Returns:
         RAGASResult mit judge-basierten Scores.
@@ -179,8 +183,9 @@ def evaluate_with_judge(
     faith_scores: list[float] = []
     rel_scores:   list[float] = []
 
-    for rr in rag_results:
-        verdict = judge.evaluate_quality(rr)
+    for i, rr in enumerate(rag_results):
+        gt = ground_truths[i] if ground_truths and i < len(ground_truths) else None
+        verdict = judge.evaluate_quality(rr, ground_truth=gt)
 
         if verdict.faithfulness_score is not None:
             faith_scores.append(verdict.faithfulness_score / 10.0)

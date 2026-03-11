@@ -78,6 +78,32 @@ def generate_cases(
 
 # ── run ───────────────────────────────────────────────────────────────────────
 
+@app.command("agent-list")
+def agent_list() -> None:
+    """Listet alle registrierten Agent-Typen auf."""
+    from rag.agent_registry import list_types, labels as registry_labels
+
+    table = Table(title="Registrierte Agent-Typen")
+    table.add_column("Typ",          style="bold cyan")
+    table.add_column("Anzeigename")
+    table.add_column("Env-Variable")
+
+    env_hints = {
+        "syntax":  "SYNTAX_AGENT_URL + SYNTAX_AGENT_API_KEY",
+        "demo":    "ANTHROPIC_API_KEY",
+        "azure":   "AGENT_URL + AGENT_API_KEY + AZURE_DEPLOYMENT",
+        "copilot": "COPILOT_DIRECT_LINE_SECRET",
+        "generic": "AGENT_URL + AGENT_API_KEY",
+    }
+
+    lbls = registry_labels()
+    for t in list_types():
+        table.add_row(t, lbls.get(t, "–"), env_hints.get(t, "–"))
+
+    console.print(table)
+    console.print(Panel(f"[dim]Aktuell aktiv: [bold]{config.RAG_TARGET}[/bold]  (RAG_TARGET)[/dim]"))
+
+
 @app.command("run")
 def run_tests(
     category: Annotated[str, typer.Option("--category", "-c", help="all | <kategorie>")] = "all",
@@ -86,21 +112,19 @@ def run_tests(
 ) -> None:
     """Fuehrt den RAG-Agenten gegen Testfaelle aus und speichert Ergebnisse."""
     from rag.wrapper import RAGPipelineWrapper
-    from rag.syntax_agent import SyntaxAgentWrapper, get_wrapper
+    from rag.agent_registry import get_wrapper as _get_wrapper
     from test_generator.base import TestCase, BaseTestCaseGenerator
 
     # API-Key-Validierung je nach Target
     target = config.RAG_TARGET
-    if target == "syntax":
-        if not config.SYNTAX_AGENT_API_KEY or config.SYNTAX_AGENT_API_KEY.startswith("sk-5-..."):
-            console.print("[red]FEHLER: SYNTAX_AGENT_API_KEY nicht gesetzt. Bitte .env befuellen.[/red]")
-            raise typer.Exit(1)
-        console.print(f"[bold cyan]Target: Syntax AI Studio Agent[/bold cyan]")
-    else:
+    if target == "demo":
         if not config.ANTHROPIC_API_KEY or config.ANTHROPIC_API_KEY.startswith("sk-ant-..."):
             console.print("[red]FEHLER: ANTHROPIC_API_KEY nicht gesetzt. Bitte .env befuellen.[/red]")
             raise typer.Exit(1)
-        console.print(f"[bold cyan]Target: Demo RAG (ChromaDB + Claude)[/bold cyan]")
+
+    from rag.agent_registry import labels as _labels
+    agent_label = _labels().get(target, target)
+    console.print(f"[bold cyan]Target: {agent_label}[/bold cyan]")
 
     test_files = list(config.TEST_CASES_DIR.glob("*.json"))
     if category != "all":
@@ -114,7 +138,7 @@ def run_tests(
     n_limit = 3 if dry_run else (limit if limit > 0 else None)
 
     with console.status(f"Initialisiere {target.upper()} Agent..."):
-        wrapper = get_wrapper()
+        wrapper = _get_wrapper()
 
     consecutive_errors = 0
     aborted = False
@@ -133,15 +157,15 @@ def run_tests(
             q_safe = tc.question.encode("ascii", errors="replace").decode("ascii")
             with console.status(f"  Test {i}/{len(cases)}: {q_safe[:60]}..."):
                 try:
-                    # Syntax Agent: Injections direkt in die Frage einbetten
+                    # Injizierte Dokumente (Corpus-Poisoning-Simulation):
                     # Demo RAG:     Injizierte Dokumente an ChromaDB übergeben
-                    if target == "syntax" and tc.injected_docs:
-                        # Corpus-Poisoning-Simulation: Injizierte Inhalte in die Frage einbetten
-                        poisoned_question = tc.question + "\n\n[Kontext aus Wissensbasis]:\n" + "\n".join(tc.injected_docs)
-                        rag_result = wrapper.query(poisoned_question, extra_metadata={"test_case_id": tc.id, "poisoned": True})
-                    elif target == "demo" and tc.injected_docs:
+                    # Alle anderen: Inhalte direkt in die Frage einbetten
+                    if target == "demo" and tc.injected_docs:
                         w = RAGPipelineWrapper.with_injected_docs(tc.injected_docs)
                         rag_result = w.query(tc.question, extra_metadata={"test_case_id": tc.id})
+                    elif target != "demo" and tc.injected_docs:
+                        poisoned_question = tc.question + "\n\n[Kontext aus Wissensbasis]:\n" + "\n".join(tc.injected_docs)
+                        rag_result = wrapper.query(poisoned_question, extra_metadata={"test_case_id": tc.id, "poisoned": True})
                     else:
                         rag_result = wrapper.query(tc.question, extra_metadata={"test_case_id": tc.id})
 
@@ -270,41 +294,66 @@ def evaluate(
             table.add_row(name, f"{val:.3f}" if val else "N/A", f"{status} {op}{thr}")
         console.print(table)
 
-    # ── Judge-Quality Fallback ─────────────────────────────────────────────────
-    # Berechnet fehlende Qualitaetsmetriken (Faithfulness, Answer Relevancy)
-    # via LLM-Judge wenn RAGAS mangels Kontext-Logs kein Ergebnis liefern konnte.
+    # ── Judge-Quality Evaluation ───────────────────────────────────────────────
+    # Berechnet Qualitaetsmetriken (Faithfulness, Answer Relevancy) via LLM-Judge.
+    #
+    # Wenn Kontext vorhanden (Demo RAG): Judge als Fallback fuer fehlende RAGAS-Werte.
+    # Wenn kein Kontext (z.B. Syntax AI Studio): Judge laeuft immer und nutzt
+    # ground_truth als Referenzantwort → liefert aussagekraeftige Scores.
     if judge_quality:
-        missing = [k for k, v in ragas_result.to_dict().items()
-                   if v is None and k in ("faithfulness", "answer_relevancy")]
-        if missing:
-            # Gleicher Filter wie RAGAS
-            if ragas_category == "all":
-                jq_pairs = list(zip(test_cases, rag_results))
-            else:
-                jq_pairs = [
-                    (tc, rr) for tc, rr in zip(test_cases, rag_results)
-                    if tc.category.value == ragas_category
-                ]
+        # Gleicher Filter wie RAGAS
+        if ragas_category == "all":
+            jq_pairs = list(zip(test_cases, rag_results))
+        else:
+            jq_pairs = [
+                (tc, rr) for tc, rr in zip(test_cases, rag_results)
+                if tc.category.value == ragas_category
+            ]
 
-            if jq_pairs:
-                _, jq_rrs = zip(*jq_pairs)
+        if jq_pairs:
+            jq_tcs, jq_rrs = zip(*jq_pairs)
+
+            # Pruefen ob Kontext vorhanden ist
+            has_any_context = any(rr.contexts for rr in jq_rrs)
+
+            # Judge immer ausfuehren wenn:
+            #   a) Kein Kontext vorhanden (Syntax-Agent) → ground_truth als Referenz
+            #   b) RAGAS-Metriken fehlen (None) → Fallback
+            missing = [k for k, v in ragas_result.to_dict().items()
+                       if v is None and k in ("faithfulness", "answer_relevancy")]
+
+            if not has_any_context or missing:
+                ground_truths = [tc.ground_truth for tc in jq_tcs]
+                n_with_gt = sum(1 for gt in ground_truths if gt)
+
+                mode = "mit ground_truth-Referenz" if not has_any_context else "Fallback (keine Kontext-Metriken)"
                 console.print(
-                    f"[dim]Judge-Quality: {len(jq_rrs)} Tests, "
-                    f"fehlende Metriken: {missing}[/dim]"
+                    f"[dim]Judge-Quality ({mode}): {len(jq_rrs)} Tests, "
+                    f"{n_with_gt} mit ground_truth[/dim]"
                 )
                 with console.status("Berechne Qualitaetsmetriken via LLM-Judge..."):
                     from evaluator.judge import LLMJudge
                     from evaluator.ragas_metrics import evaluate_with_judge
                     judge_inst = LLMJudge()
-                    judge_result = evaluate_with_judge(list(jq_rrs), judge_inst)
+                    judge_result = evaluate_with_judge(
+                        list(jq_rrs),
+                        judge_inst,
+                        ground_truths=ground_truths,
+                    )
 
-                # Nur null-Werte auffuellen, vorhandene RAGAS-Werte bleiben
-                if ragas_result.faithfulness is None:
-                    ragas_result.faithfulness = judge_result.faithfulness
-                if ragas_result.answer_relevancy is None:
+                # Ohne Kontext: Judge-Ergebnisse haben Prioritaet (ground_truth-basiert)
+                # Mit Kontext: Nur fehlende (None) RAGAS-Werte aufuellen
+                if not has_any_context:
+                    ragas_result.faithfulness     = judge_result.faithfulness
                     ragas_result.answer_relevancy = judge_result.answer_relevancy
+                else:
+                    if ragas_result.faithfulness is None:
+                        ragas_result.faithfulness = judge_result.faithfulness
+                    if ragas_result.answer_relevancy is None:
+                        ragas_result.answer_relevancy = judge_result.answer_relevancy
 
-                jq_table = Table(title="Qualitaetsmetriken (LLM-Judge Fallback)")
+                title = "Qualitaetsmetriken (LLM-Judge, ground_truth-Referenz)" if not has_any_context else "Qualitaetsmetriken (LLM-Judge Fallback)"
+                jq_table = Table(title=title)
                 jq_table.add_column("Metrik")
                 jq_table.add_column("Score")
                 jq_table.add_column("Schwellenwert")
@@ -416,7 +465,7 @@ def validate_all(
     category: Annotated[str, typer.Option("--category", "-c")] = "all",
     limit: Annotated[int, typer.Option("--limit", "-n")] = 0,
 ) -> None:
-    """Vollständige Validierung: generate-cases → run → evaluate → report."""
+    """Vollstaendige Validierung: generate-cases -> run -> evaluate -> report."""
     console.print(Panel("[bold]RAG Validation Framework – Vollständige Validierung[/bold]"))
 
     console.rule("Schritt 1: Testfälle generieren")
@@ -432,6 +481,127 @@ def validate_all(
     report(fmt="both")
 
 
+# ── discover-kb ───────────────────────────────────────────────────────────────
+
+@app.command("discover-kb")
+def discover_kb(
+    probe_file: str | None = typer.Option(
+        None, "--probe-file",
+        help="Textdatei mit eigenen Probe-Fragen (eine Frage pro Zeile)"
+    ),
+    n_probes: int = typer.Option(
+        20, "--n-probes",
+        help="Anzahl der Standard-Probe-Fragen (Standard: 20)"
+    ),
+) -> None:
+    """Entdeckt die KB des Agents via Probe-Fragen und generiert KB-spezifische Testfaelle."""
+    from rag.agent_registry import get_wrapper as _get_wrapper, labels as _labels
+    from test_generator.kb_generator import AgentKBDiscovery
+
+    agent_type = config.RAG_TARGET
+    agent_label = _labels().get(agent_type, agent_type)
+
+    console.print(f"[bold cyan]Agent Knowledge Discovery[/bold cyan]")
+    console.print(f"Target: [bold]{agent_label}[/bold]  (RAG_TARGET={agent_type})")
+
+    # ── Eigene Probe-Fragen aus Datei laden ───────────────────────────────────
+    extra_questions: list[str] | None = None
+    if probe_file:
+        probe_path = Path(probe_file)
+        if not probe_path.exists():
+            console.print(f"[red]Probe-Datei nicht gefunden: {probe_file}[/red]")
+            raise typer.Exit(1)
+        lines = probe_path.read_text(encoding="utf-8").splitlines()
+        extra_questions = [l.strip() for l in lines if l.strip()]
+        console.print(f"[dim]Zusaetzliche Fragen aus Datei: {len(extra_questions)}[/dim]")
+
+    # ── Agent initialisieren ──────────────────────────────────────────────────
+    with console.status(f"Initialisiere {agent_type.upper()} Agent..."):
+        try:
+            wrapper = _get_wrapper()
+        except Exception as e:
+            console.print(f"[red]Fehler beim Initialisieren des Agents: {e}[/red]")
+            raise typer.Exit(1)
+
+    # ── Discovery: Probe-Fragen senden ────────────────────────────────────────
+    discovery = AgentKBDiscovery()
+    total_probes = n_probes + (len(extra_questions) if extra_questions else 0)
+    console.print(f"\n[bold]Schritt 1: {total_probes} Probe-Fragen senden[/bold]")
+
+    discoveries: list[dict] = []
+    from test_generator.kb_generator import DEFAULT_PROBE_QUESTIONS, IGNORE_PATTERNS
+
+    questions = DEFAULT_PROBE_QUESTIONS[:n_probes]
+    if extra_questions:
+        questions = questions + extra_questions
+
+    table = Table(title="Probe-Ergebnisse")
+    table.add_column("Frage",   style="dim", max_width=45)
+    table.add_column("Antwort", max_width=60)
+    table.add_column("Status",  style="bold")
+
+    for q in questions:
+        q_safe = q.encode("ascii", errors="replace").decode("ascii")
+        with console.status(f"  Frage: {q_safe[:60]}..."):
+            try:
+                result = wrapper.query(q)
+                answer = result.answer.strip()
+                lower  = answer.lower()
+                is_meaningless = any(pat in lower for pat in IGNORE_PATTERNS)
+
+                if answer and not is_meaningless:
+                    discoveries.append({"question": q, "answer": answer})
+                    a_safe = answer.encode("ascii", errors="replace").decode("ascii")
+                    table.add_row(q_safe[:45], a_safe[:60], "[green]OK[/green]")
+                else:
+                    a_safe = answer.encode("ascii", errors="replace").decode("ascii") if answer else "(leer)"
+                    table.add_row(q_safe[:45], a_safe[:60], "[yellow]Gefiltert[/yellow]")
+            except Exception as e:
+                table.add_row(q_safe[:45], f"Fehler: {str(e)[:40]}", "[red]Fehler[/red]")
+
+    console.print(table)
+    console.print(f"\n[dim]{len(discoveries)} aussagekraeftige Antworten von {len(questions)} Fragen[/dim]")
+
+    if not discoveries:
+        console.print(
+            "[yellow]Keine aussagekraeftigen Antworten erhalten.\n"
+            "Moegliche Ursachen:\n"
+            "  1. Agent hat keine passenden Dokumente in seiner KB\n"
+            "  2. Verbindungsproblem (RAG_TARGET, API-Key pruefen)\n"
+            "  3. Eigene Probe-Fragen mit --probe-file angeben[/yellow]"
+        )
+        raise typer.Exit(1)
+
+    # ── Testfälle generieren ──────────────────────────────────────────────────
+    console.print(f"\n[bold]Schritt 2: Testfaelle aus {len(discoveries)} Entdeckungen generieren[/bold]")
+
+    with console.status(f"LLM generiert Testfaelle ({len(discoveries) * 2} Aufrufe)..."):
+        cases_by_category = discovery.generate_cases_from_discoveries(discoveries, agent_type)
+
+    n_faith  = len(cases_by_category.get("faithfulness", []))
+    n_poison = len(cases_by_category.get("corpus_poisoning", []))
+    console.print(f"  Faithfulness:    [green]{n_faith}[/green] Testfaelle")
+    console.print(f"  Corpus-Poisoning: [green]{n_poison}[/green] Testfaelle")
+
+    if n_faith + n_poison == 0:
+        console.print("[yellow]Keine Testfaelle generiert. LLM-Backend pruefen.[/yellow]")
+        raise typer.Exit(1)
+
+    # ── Speichern ─────────────────────────────────────────────────────────────
+    saved = discovery.save_cases(cases_by_category, agent_type, config.TEST_CASES_DIR)
+
+    console.print(Panel(
+        f"[bold green]{len(discoveries)} Entdeckungen -> {n_faith + n_poison} Testfaelle gespeichert[/bold green]\n"
+        + "\n".join(
+            f"  {cat}: [cyan]{path.name}[/cyan]"
+            for cat, path in saved.items()
+        )
+        + "\n\n[dim]Naechste Schritte:[/dim]\n"
+        f"  uv run python main.py run --category kb_{agent_type}_faithfulness --limit 20\n"
+        f"  uv run python main.py evaluate --ragas-category faithfulness"
+    ))
+
+
 # ── ping ─────────────────────────────────────────────────────────────────────
 
 @app.command("ping")
@@ -440,18 +610,28 @@ def ping(
     question: Annotated[str, typer.Option("--question", "-q", help="Test-Frage")] = "Was sind die Urlaubsregelungen?",
 ) -> None:
     """Testet die Verbindung und zeigt optional die rohe API-Response."""
+    from rag.agent_registry import get_wrapper as _get_wrapper, labels as _labels
     target = config.RAG_TARGET
-    console.print(f"Teste Verbindung zu: [bold]{target.upper()}[/bold]")
+    agent_label = _labels().get(target, target)
+    console.print(f"Teste Verbindung zu: [bold]{agent_label}[/bold]  (RAG_TARGET={target})")
 
-    if target == "syntax":
+    if target == "demo":
+        console.print("[yellow]Target ist 'demo' (lokale Pipeline). Kein Remote-Ping noetig.[/yellow]")
+        console.print("Setze RAG_TARGET=syntax/azure/copilot/generic in .env um einen echten Agenten zu testen.")
+        return
+
+    try:
+        wrapper = _get_wrapper()
+    except Exception as e:
+        console.print(f"[red]Fehler beim Initialisieren des Wrappers: {e}[/red]")
+        raise typer.Exit(1)
+
+    # ── Debug: raw Response (nur für Syntax AI Studio verfügbar) ──────────────
+    if debug and target == "syntax":
         from rag.syntax_agent import SyntaxAgentWrapper
-        if not config.SYNTAX_AGENT_API_KEY:
-            console.print("[red]SYNTAX_AGENT_API_KEY nicht gesetzt.[/red]")
-            raise typer.Exit(1)
-        wrapper = SyntaxAgentWrapper()
-
-        if debug:
-            # ── Debug-Modus: rohe API-Response anzeigen ────────────────────
+        if not isinstance(wrapper, SyntaxAgentWrapper):
+            console.print("[yellow]--debug nur fuer target=syntax verfuegbar.[/yellow]")
+        else:
             console.print(f"\n[bold]Frage:[/bold] {question}")
             console.print("[bold]Rohe API-Response (vollstaendig):[/bold]\n")
             with console.status("Sende Anfrage..."):
@@ -465,45 +645,39 @@ def ping(
             console.print("\n[bold]Analyse der Response-Felder:[/bold]")
             console.print(f"  Top-Level Keys: {list(raw.keys())}")
 
-            # Zeige ob Kontext-Felder vorhanden sind
             context_fields = ["citations", "sourceDocuments", "source_documents",
                               "context", "intermediate_steps", "sources",
                               "references", "chunks", "documents", "passages"]
             found = [f for f in context_fields if f in raw]
             if found:
                 console.print(f"  [green]Kontext-Felder gefunden: {found}[/green]")
-                # citations separat prüfen (Syntax AI Studio eigenes Format)
                 if "citations" in raw:
                     cites = raw["citations"]
                     if cites:
                         console.print(f"  [green]citations: {len(cites)} Eintraege -> RAGAS Context-Metriken berechenbar![/green]")
                     else:
                         console.print("  [yellow]citations: leer (Agent hat keine passenden Dokumente gefunden)[/yellow]")
-                        console.print("  -> Frage zu einem Thema stellen das der Agent kennt, um citations zu sehen")
                 other = [f for f in found if f != "citations"]
                 if other:
                     console.print(f"  -> Weitere Kontext-Felder: {other}")
             else:
-                console.print(f"  [yellow]Keine Kontext-Felder in Response.[/yellow]")
-                console.print("  -> Siehe Optionen in rag/syntax_agent.py Docstring")
-        else:
-            # ── Normaler Verbindungstest ───────────────────────────────────
-            with console.status("Sende Test-Anfrage an Syntax AI Studio..."):
-                try:
-                    result = wrapper.query(question)
-                    console.print(f"[green]Verbindung OK![/green]")
-                    console.print(f"Antwort: {result.answer[:300]}")
-                    if result.contexts:
-                        console.print(f"[green]Kontext abgerufen: {len(result.contexts)} Chunk(s)[/green]")
-                        console.print(f"  Erster Chunk (100 Zeichen): {result.contexts[0][:100]}...")
-                    else:
-                        console.print("[yellow]Kein Kontext in Response. Fuer Details: --debug[/yellow]")
-                except Exception as e:
-                    console.print(f"[red]Verbindungsfehler: {e}[/red]")
-                    raise typer.Exit(1)
-    else:
-        console.print("[yellow]Target ist 'demo' (lokale Pipeline). Kein Remote-Ping noetig.[/yellow]")
-        console.print("Setze RAG_TARGET=syntax in .env um den echten Agenten zu testen.")
+                console.print("[yellow]Keine Kontext-Felder in Response.[/yellow]")
+            return
+
+    # ── Normaler Verbindungstest ───────────────────────────────────────────────
+    with console.status(f"Sende Test-Anfrage an {agent_label}..."):
+        try:
+            result = wrapper.query(question)
+            console.print("[green]Verbindung OK![/green]")
+            console.print(f"Antwort: {result.answer[:300]}")
+            if result.contexts:
+                console.print(f"[green]Kontext abgerufen: {len(result.contexts)} Chunk(s)[/green]")
+                console.print(f"  Erster Chunk (100 Zeichen): {result.contexts[0][:100]}...")
+            else:
+                console.print("[yellow]Kein Kontext in Response.[/yellow]")
+        except Exception as e:
+            console.print(f"[red]Verbindungsfehler: {e}[/red]")
+            raise typer.Exit(1)
 
 
 if __name__ == "__main__":

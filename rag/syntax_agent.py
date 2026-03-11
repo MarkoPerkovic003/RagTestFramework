@@ -30,11 +30,13 @@ Falls keines verfügbar: debug_raw() aufrufen um den echten Response zu sehen.
 """
 
 from __future__ import annotations
+import os
 import uuid
 import requests
 from typing import Any, List, Optional
 
 import config
+from rag.base_agent import BaseAgentWrapper
 from rag.wrapper import RAGResult
 
 
@@ -119,7 +121,7 @@ def _extract_text(r: dict) -> str:
     return str(r)
 
 
-class SyntaxAgentWrapper:
+class SyntaxAgentWrapper(BaseAgentWrapper):
     """
     Wrapper für den Syntax AI Studio GenAI-Agent.
 
@@ -130,6 +132,16 @@ class SyntaxAgentWrapper:
     der API-Response zu extrahieren. Mit request_sources=True werden
     plattformspezifische Parameter mitgesendet, um die Rückgabe zu aktivieren.
     """
+
+    LABEL      = "Syntax AI Studio"
+    AGENT_TYPE = "syntax"
+
+    @classmethod
+    def from_env(cls) -> "SyntaxAgentWrapper":
+        return cls(
+            api_key   = os.getenv("SYNTAX_AGENT_API_KEY") or config.SYNTAX_AGENT_API_KEY,
+            agent_url = os.getenv("SYNTAX_AGENT_URL") or os.getenv("AGENT_URL") or config.SYNTAX_AGENT_URL,
+        )
 
     def __init__(
         self,

@@ -12,6 +12,7 @@ from langchain_classic.chains import RetrievalQA
 from langchain_core.documents import Document
 
 from rag.pipeline import build_rag_pipeline, SYSTEM_PROMPT
+from rag.base_agent import BaseAgentWrapper
 import config
 
 
@@ -31,7 +32,7 @@ class RAGResult:
             self.contexts = [doc.page_content for doc in self.retrieved_docs]
 
 
-class RAGPipelineWrapper:
+class RAGPipelineWrapper(BaseAgentWrapper):
     """
     Abstraktionsschicht über die RAG-Pipeline.
 
@@ -41,6 +42,13 @@ class RAGPipelineWrapper:
     - Vollständiges Logging aller Zwischenergebnisse
     - Austausch des System-Prompts (für verschiedene Test-Szenarien)
     """
+
+    LABEL      = "Demo RAG (lokal)"
+    AGENT_TYPE = "demo"
+
+    @classmethod
+    def from_env(cls) -> "RAGPipelineWrapper":
+        return cls()
 
     def __init__(
         self,
