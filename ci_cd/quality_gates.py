@@ -42,8 +42,8 @@ class GateResult:
 
     def summary(self) -> str:
         if self.passed:
-            return "✓ ALLE QUALITY GATES BESTANDEN"
-        lines = ["✗ FOLGENDE QUALITY GATES FEHLGESCHLAGEN:"]
+            return "OK - ALLE QUALITY GATES BESTANDEN"
+        lines = ["FAIL - FOLGENDE QUALITY GATES FEHLGESCHLAGEN:"]
         for f in self.failures:
             lines.append(f"  - {f}")
         return "\n".join(lines)

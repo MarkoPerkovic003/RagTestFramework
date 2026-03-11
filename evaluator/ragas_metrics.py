@@ -111,11 +111,18 @@ class RAGASEvaluator:
             "contexts":  [r.contexts for r in rag_results],
         }
 
-        if ground_truths:
+        # Kontext-Metriken nur wenn mindestens ein nicht-leerer Kontext vorhanden
+        has_contexts = any(r.contexts for r in rag_results)
+
+        if ground_truths and has_contexts:
             data["ground_truth"] = [gt or "" for gt in ground_truths]
             metrics = [faithfulness, answer_relevancy, context_precision, context_recall]
-        else:
+        elif has_contexts:
             metrics = [faithfulness, answer_relevancy, context_precision]
+        else:
+            # Kein Retrieval-Logging verfügbar (z.B. Syntax AI Studio ohne citations)
+            # → nur antwort-basierte Metriken
+            metrics = [answer_relevancy]
 
         dataset = Dataset.from_dict(data)
 
@@ -147,3 +154,44 @@ class RAGASEvaluator:
             rag_results=[rag_result],
             ground_truths=[ground_truth] if ground_truth else None,
         )
+
+
+def evaluate_with_judge(
+    rag_results: list[RAGResult],
+    judge: Any,
+) -> RAGASResult:
+    """
+    Berechnet Qualitätsmetriken via LLM-Judge als Fallback für fehlende RAGAS-Werte.
+
+    Normalisiert Judge-Scores (0-10) auf RAGAS-Skala (0-1).
+    Gibt RAGASResult mit faithfulness und answer_relevancy zurück.
+
+    Args:
+        rag_results: RAG-Ergebnisse (question + answer, contexts optional).
+        judge:       Initialisierter LLMJudge.
+
+    Returns:
+        RAGASResult mit judge-basierten Scores.
+    """
+    if not rag_results:
+        return RAGASResult()
+
+    faith_scores: list[float] = []
+    rel_scores:   list[float] = []
+
+    for rr in rag_results:
+        verdict = judge.evaluate_quality(rr)
+
+        if verdict.faithfulness_score is not None:
+            faith_scores.append(verdict.faithfulness_score / 10.0)
+        if verdict.relevancy_score is not None:
+            rel_scores.append(verdict.relevancy_score / 10.0)
+        elif verdict.score is not None:
+            # Fallback: combined score für beide Dimensionen nutzen
+            faith_scores.append(verdict.score / 10.0)
+            rel_scores.append(verdict.score / 10.0)
+
+    return RAGASResult(
+        faithfulness=round(sum(faith_scores) / len(faith_scores), 4) if faith_scores else None,
+        answer_relevancy=round(sum(rel_scores) / len(rel_scores), 4) if rel_scores else None,
+    )

@@ -51,6 +51,44 @@ SOURCE_ENABLE_PARAMS = {
 }
 
 
+def _try_extract_json(text: str) -> str:
+    """
+    Versucht reines JSON aus einer Antwort zu extrahieren.
+
+    Wird verwendet um RAGAS-Kompatibilität herzustellen: Chat-Modelle
+    verpacken JSON oft in Markdown-Blöcke oder fügen Erklärungen hinzu.
+    RAGAS erwartet reines JSON ohne Formatierung.
+    """
+    import json as _json
+
+    # ── Markdown-Codeblock ────────────────────────────────────────────────────
+    if "```json" in text:
+        try:
+            return text.split("```json")[1].split("```")[0].strip()
+        except IndexError:
+            pass
+    if "```" in text:
+        try:
+            candidate = text.split("```")[1].split("```")[0].strip()
+            _json.loads(candidate)
+            return candidate
+        except (IndexError, _json.JSONDecodeError):
+            pass
+
+    # ── Erstes JSON-Objekt oder Array im Text suchen ──────────────────────────
+    for start_char in ("{", "["):
+        idx = text.find(start_char)
+        if idx != -1:
+            try:
+                decoder = _json.JSONDecoder()
+                obj, _ = decoder.raw_decode(text[idx:])
+                return _json.dumps(obj, ensure_ascii=False)
+            except _json.JSONDecodeError:
+                continue
+
+    return text
+
+
 def _extract_text(r: dict) -> str:
     """
     Extrahiert den Antwort-Text aus verschiedenen Response-Strukturen.
@@ -171,22 +209,37 @@ class SyntaxAgentWrapper:
             "x-api-key": self._api_key,
         }
 
-        try:
-            response = requests.post(
-                self._agent_url,
-                headers=headers,
-                json=payload,
-                timeout=60,
-            )
-            response.raise_for_status()
-        except requests.exceptions.Timeout:
-            raise SyntaxAgentError(f"Timeout (>60s): {question[:80]}")
-        except requests.exceptions.HTTPError as e:
-            raise SyntaxAgentError(f"HTTP {response.status_code}: {e}")
-        except requests.exceptions.RequestException as e:
-            raise SyntaxAgentError(f"Verbindungsfehler: {e}")
+        import time
+        retries = 3
+        backoff = 5  # Sekunden
+        last_error: Exception | None = None
 
-        return response.json()
+        for attempt in range(1, retries + 1):
+            try:
+                response = requests.post(
+                    self._agent_url,
+                    headers=headers,
+                    json=payload,
+                    timeout=60,
+                )
+                # 502/503/429: transient – kurz warten und nochmal versuchen
+                if response.status_code in (429, 502, 503) and attempt < retries:
+                    time.sleep(backoff * attempt)
+                    continue
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.Timeout:
+                last_error = SyntaxAgentError(f"Timeout (>60s): {question[:80]}")
+                if attempt < retries:
+                    time.sleep(backoff * attempt)
+            except requests.exceptions.HTTPError as e:
+                last_error = SyntaxAgentError(f"HTTP {response.status_code}: {e}")
+                if attempt < retries:
+                    time.sleep(backoff * attempt)
+            except requests.exceptions.RequestException as e:
+                raise SyntaxAgentError(f"Verbindungsfehler: {e}")
+
+        raise last_error  # type: ignore[misc]
 
     def _extract_answer(self, r: dict) -> str:
         """Extrahiert den Antwort-Text aus verschiedenen Response-Strukturen."""
@@ -310,8 +363,16 @@ class SyntaxChatLLM:
                 text = "\n\n".join(
                     str(m.content) for m in messages if m.content
                 )
+                # RAGAS-Kompatibilität: JSON-only Instruction anhängen.
+                # Chat-Agenten antworten sonst mit Markdown/Erklärungen,
+                # was RAGAS's Output-Parser nicht verarbeiten kann.
+                text += (
+                    "\n\nIMPORTANT: Your response MUST be valid JSON only. "
+                    "No markdown formatting, no explanations, no text outside the JSON."
+                )
                 raw = self._call_syntax_api(text)
                 answer = _extract_text(raw)
+                answer = _try_extract_json(answer)
                 return ChatResult(
                     generations=[ChatGeneration(message=AIMessage(content=answer))]
                 )

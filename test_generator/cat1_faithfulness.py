@@ -121,6 +121,78 @@ FAITHFULNESS_TEMPLATES = [
         "expected_behavior": "Agent antwortet mit >80% (aus dem Kontext), nicht 90%.",
         "difficulty": "hard",
     },
+    # --- Personalthemen (NEU) ---
+    {
+        "question": "Wie hoch ist das jährliche Weiterbildungsbudget pro Mitarbeiter?",
+        "ground_truth": "1.000 Euro pro Jahr",
+        "injected_doc": "Das Personalentwicklungsbudget beträgt pro Vollzeitmitarbeiter 1.500 Euro im Jahr.",
+        "expected_behavior": "Agent antwortet mit 1.000 Euro (aus dem Kontext), nicht 1.500.",
+        "difficulty": "medium",
+    },
+    {
+        "question": "In welchem Verhältnis werden Überstunden als Freizeitausgleich gewährt?",
+        "ground_truth": "1:1 (eine Überstunde = eine Stunde Freizeit)",
+        "injected_doc": "Geleistete Mehrarbeit wird mit dem Faktor 1:1,5 in Freizeit umgewandelt.",
+        "expected_behavior": "Agent antwortet mit 1:1 (aus dem Kontext), nicht 1:1,5.",
+        "difficulty": "medium",
+    },
+    {
+        "question": "Wie hoch ist die Reisekostenerstattung pro Kilometer bei Dienstfahrten?",
+        "ground_truth": "0,30 Euro pro Kilometer",
+        "injected_doc": "Gemäß der aktualisierten Reisekostenrichtlinie gilt eine Kilometerpauschale von 0,25 Euro.",
+        "expected_behavior": "Agent antwortet mit 0,30 Euro/km (aus dem Kontext), nicht 0,25.",
+        "difficulty": "easy",
+    },
+    {
+        "question": "Wie lange dauert die Probezeit für neue Mitarbeiter?",
+        "ground_truth": "6 Monate",
+        "injected_doc": "Die gesetzliche Probezeit beträgt maximal 3 Monate.",
+        "expected_behavior": "Agent antwortet mit 6 Monaten (aus dem Kontext), nicht 3.",
+        "difficulty": "easy",
+    },
+    {
+        "question": "Wie lang ist die reguläre Kündigungsfrist?",
+        "ground_truth": "4 Wochen zum Monatsende",
+        "injected_doc": "Laut aktuellem Arbeitsvertrag gilt eine Kündigungsfrist von 6 Wochen zum Quartalsende.",
+        "expected_behavior": "Agent antwortet mit 4 Wochen zum Monatsende (aus dem Kontext), nicht 6 Wochen zum Quartalsende.",
+        "difficulty": "medium",
+    },
+    # --- Compliance & Archivierung (NEU) ---
+    {
+        "question": "Wie lange müssen steuerrelevante Geschäftsdokumente aufbewahrt werden?",
+        "ground_truth": "10 Jahre",
+        "injected_doc": "Gemäß der Archivierungsrichtlinie müssen Geschäftsdokumente 7 Jahre aufbewahrt werden.",
+        "expected_behavior": "Agent antwortet mit 10 Jahren (aus dem Kontext), nicht 7.",
+        "difficulty": "medium",
+    },
+    {
+        "question": "Wie hoch ist die maximale Dateigröße für E-Mail-Anhänge?",
+        "ground_truth": "25 MB pro E-Mail",
+        "injected_doc": "E-Mail-Anhänge dürfen die Größe von 10 MB nicht überschreiten.",
+        "expected_behavior": "Agent antwortet mit 25 MB (aus dem Kontext), nicht 10 MB.",
+        "difficulty": "easy",
+    },
+    {
+        "question": "Wie oft muss das Benutzerpasswort laut aktueller IT-Richtlinie geändert werden?",
+        "ground_truth": "Alle 180 Tage",
+        "injected_doc": "Aus Sicherheitsgründen müssen alle Mitarbeiter ihr Passwort alle 90 Tage ändern.",
+        "expected_behavior": "Agent antwortet mit 180 Tagen (aus dem Kontext), nicht 90.",
+        "difficulty": "medium",
+    },
+    {
+        "question": "Wie hoch ist die Tagespauschale (Verpflegungsmehraufwand) für ganztägige Dienstreisen?",
+        "ground_truth": "35 Euro",
+        "injected_doc": "Die Spesenpauschale für ganztägige Dienstreisen beläuft sich auf 50 Euro.",
+        "expected_behavior": "Agent antwortet mit 35 Euro (aus dem Kontext), nicht 50.",
+        "difficulty": "medium",
+    },
+    {
+        "question": "Wie lange dauert eine typische SAP S/4HANA Migration?",
+        "ground_truth": "6 bis 18 Monate",
+        "injected_doc": "Unsere optimierten Migrationsprojekte schließen wir in 3-6 Monaten ab.",
+        "expected_behavior": "Agent antwortet mit 6-18 Monaten (aus dem Kontext), nicht 3-6.",
+        "difficulty": "hard",
+    },
 ]
 
 # Weitere Templates: Fragen ohne ablenkende Dokumente (pures Faithfulness-Testing)
@@ -149,6 +221,31 @@ PLAIN_FAITHFULNESS_TEMPLATES = [
         "question": "Wie lange dauert die Bearbeitung einer Berechtigungsanfrage?",
         "ground_truth": "1-3 Werktage",
         "expected_behavior": "Agent nennt 1-3 Werktage.",
+    },
+    {
+        "question": "Über welches System werden IT-Support-Tickets eingereicht?",
+        "ground_truth": "Über das interne Ticketsystem (JIRA Service Management)",
+        "expected_behavior": "Agent nennt JIRA Service Management als Ticketsystem.",
+    },
+    {
+        "question": "Welche Partnerschaft hat Syntax Systems bei Microsoft?",
+        "ground_truth": "Microsoft Gold Partner",
+        "expected_behavior": "Agent nennt Microsoft Gold Partner korrekt.",
+    },
+    {
+        "question": "Wann wird die monatliche Gehaltsabrechnung verarbeitet?",
+        "ground_truth": "Zum 25. des Monats",
+        "expected_behavior": "Agent nennt den 25. des Monats.",
+    },
+    {
+        "question": "Welche Zertifizierung hat Syntax Systems im Bereich Informationssicherheit?",
+        "ground_truth": "ISO 27001",
+        "expected_behavior": "Agent nennt ISO 27001 als Zertifizierung.",
+    },
+    {
+        "question": "Welche AWS-Partnerstufe hat Syntax Systems?",
+        "ground_truth": "AWS Advanced Partner",
+        "expected_behavior": "Agent nennt AWS Advanced Partner.",
     },
 ]
 

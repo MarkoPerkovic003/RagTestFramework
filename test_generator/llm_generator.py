@@ -12,7 +12,7 @@ zu filtern sind als Template-basierte.
 
 from __future__ import annotations
 import json
-from anthropic import Anthropic
+import requests
 
 from .base import TestCase, AttackCategory, GenerationMethod
 import config
@@ -81,14 +81,33 @@ CATEGORY_DESCRIPTIONS = {
 
 class LLMTestCaseGenerator:
     """
-    Generiert diversifizierte und neue adversariale Testfälle via Claude.
+    Generiert diversifizierte und neue adversariale Testfälle via LLM.
+
+    Nutzt bevorzugt den Syntax AI Studio Chat-Agent (JUDGE_AGENT_URL),
+    fällt auf direktes Anthropic Claude zurück wenn ANTHROPIC_API_KEY gesetzt.
 
     Ergänzt die template-basierten Generatoren um adaptive, LLM-generierte
     Varianten (30% des Testfall-Pools laut Thesis-Plan).
     """
 
     def __init__(self) -> None:
-        self._client = Anthropic(api_key=config.ANTHROPIC_API_KEY)
+        # Priorität: Syntax AI Studio Chat-Agent > Anthropic SDK
+        if config.JUDGE_AGENT_URL:
+            self._mode = "syntax"
+            self._api_key = config.JUDGE_AGENT_API_KEY or config.SYNTAX_AGENT_API_KEY
+            self._agent_url = config.JUDGE_AGENT_URL
+            self._anthropic = None
+        elif config.ANTHROPIC_API_KEY:
+            from anthropic import Anthropic
+            self._mode = "anthropic"
+            self._anthropic = Anthropic(api_key=config.ANTHROPIC_API_KEY)
+            self._api_key = None
+            self._agent_url = None
+        else:
+            raise RuntimeError(
+                "Kein LLM-Backend konfiguriert. "
+                "Bitte JUDGE_AGENT_URL oder ANTHROPIC_API_KEY in .env setzen."
+            )
 
     def diversify(
         self,
@@ -179,14 +198,21 @@ class LLMTestCaseGenerator:
         return test_cases
 
     def _call_claude(self, prompt: str) -> list[dict] | None:
-        """Ruft Claude auf und parst die JSON-Antwort."""
+        """Ruft das LLM auf und parst die JSON-Antwort."""
         try:
-            message = self._client.messages.create(
-                model=config.GENERATOR_MODEL,
-                max_tokens=2048,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            content = message.content[0].text.strip()
+            if self._mode == "syntax":
+                content = self._call_syntax(prompt)
+            else:
+                message = self._anthropic.messages.create(
+                    model=config.GENERATOR_MODEL,
+                    max_tokens=2048,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                content = message.content[0].text.strip()
+
+            if content is None:
+                return None
+
             # Extrahiere JSON aus der Antwort
             if "```json" in content:
                 content = content.split("```json")[1].split("```")[0].strip()
@@ -194,4 +220,27 @@ class LLMTestCaseGenerator:
                 content = content.split("```")[1].split("```")[0].strip()
             return json.loads(content)
         except (json.JSONDecodeError, IndexError, Exception):
+            return None
+
+    def _call_syntax(self, prompt: str) -> str | None:
+        """Ruft den Syntax AI Studio Chat-Agent via HTTP auf."""
+        import uuid
+        try:
+            response = requests.post(
+                self._agent_url,
+                headers={
+                    "Content-Type": "application/json",
+                    "x-api-key": self._api_key,
+                },
+                json={
+                    "input": [{"type": "text", "text": prompt}],
+                    "session_id": str(uuid.uuid4()),
+                },
+                timeout=120,
+            )
+            response.raise_for_status()
+            data = response.json()
+            # Syntax Agent gibt {"output": "..."} zurück
+            return data.get("output", "").strip() or None
+        except Exception:
             return None

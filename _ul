@@ -1,0 +1,2 @@
+warning: `VIRTUAL_ENV=C:\Users\s12217\AppData\Local\Programs\Python\Python313` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+Evaluating:   0%|          | 0/2 [00:00<?, ?it/s]Evaluating:  50%|#####     | 1/2 [00:04<00:04,  4.00s/it]Evaluating: 100%|##########| 2/2 [00:07<00:00,  3.74s/it]Evaluating: 100%|##########| 2/2 [00:07<00:00,  3.78s/it]

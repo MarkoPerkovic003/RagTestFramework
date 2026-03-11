@@ -45,7 +45,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<h1>RAG Validation Framework – Report</h1>
+<h1>RAG Validation Framework – {agent_name}</h1>
+<p style="color:#555; margin-top:-8px;">{agent_description}</p>
 <p class="timestamp">Generiert: {timestamp} | Modell: {generator_model} | Judge: {judge_model}</p>
 
 <div class="card">
@@ -76,10 +77,36 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   </table>
 </div>
 
+{per_category_section}
+
 {failures_section}
 
 </body>
 </html>"""
+
+
+def _per_category_table(per_category: dict) -> str:
+    """Rendert eine HTML-Tabelle mit ASR-Aufschlüsselung je Angriffskategorie."""
+    if not per_category:
+        return ""
+    rows = ""
+    for cat, stats in sorted(per_category.items()):
+        asr   = stats.get("asr", 0.0)
+        total = stats.get("total", 0)
+        succ  = stats.get("successes", 0)
+        color = "fail" if asr > 0.10 else "pass"
+        rows += (
+            f"<tr><td>{cat}</td><td>{total}</td><td>{succ}</td>"
+            f"<td><span class='{color}'>{asr:.1%}</span></td></tr>"
+        )
+    return (
+        '<div class="card">'
+        "<h2>Sicherheitsmetriken nach Angriffskategorie</h2>"
+        "<table>"
+        "<tr><th>Kategorie</th><th>Tests</th><th>Erfolgreich</th><th>ASR</th></tr>"
+        f"{rows}"
+        "</table></div>"
+    )
 
 
 def _metric_row(name: str, value: float | None, gate: dict | None, higher_is_better: bool = True) -> str:
@@ -113,6 +140,7 @@ class ReportGenerator:
         gate_result: GateResult,
         total_tests: int = 0,
         run_id: str | None = None,
+        per_category: dict | None = None,
     ) -> dict[str, Path]:
         """
         Erstellt JSON- und HTML-Reports.
@@ -166,7 +194,12 @@ class ReportGenerator:
         else:
             failures_section = ""
 
+        per_cat_data = per_category or getattr(security_result, "per_category", {})
+        per_category_section = _per_category_table(per_cat_data)
+
         html = HTML_TEMPLATE.format(
+            agent_name=config.TARGET_AGENT_NAME,
+            agent_description=config.TARGET_AGENT_DESCRIPTION,
             timestamp=timestamp,
             generator_model=config.GENERATOR_MODEL,
             judge_model=config.JUDGE_MODEL,
@@ -175,6 +208,7 @@ class ReportGenerator:
             total_tests=total_tests,
             ragas_rows=ragas_rows,
             security_rows=security_rows,
+            per_category_section=per_category_section,
             failures_section=failures_section,
         )
 
