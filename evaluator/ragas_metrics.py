@@ -2,10 +2,10 @@
 RAGAS-Integration für Qualitätsmetriken.
 
 Berechnet folgende Metriken (Abschnitt 3.2 der Bachelorarbeit):
-- Faithfulness:       Faktische Konsistenz der Antwort gegenüber dem Kontext
-- Answer Relevancy:   Relevanz der Antwort für die Frage
-- Context Precision:  Signal-Rausch-Verhältnis des abgerufenen Kontexts
-- Context Recall:     Vollständigkeit des abgerufenen Kontexts
+- Faithfulness:     Faktische Konsistenz der Antwort gegenüber dem Kontext
+                    (nur berechenbar wenn RAG-System Kontext-Dokumente zurückgibt)
+- Answer Relevancy: Relevanz der Antwort für die Frage
+                    (immer berechenbar, braucht nur Frage + Antwort)
 
 Judge-LLM (Priorität):
   1. JUDGE_AGENT_URL gesetzt → SyntaxChatLLM (GPT 5.2 Chat via Syntax AI Studio)
@@ -18,7 +18,7 @@ from typing import Any
 
 from datasets import Dataset
 from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_precision, context_recall
+from ragas.metrics import faithfulness, answer_relevancy
 from ragas.llms import LangchainLLMWrapper
 from ragas.embeddings import LangchainEmbeddingsWrapper
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -30,11 +30,10 @@ import config
 @dataclass
 class RAGASResult:
     """Ergebnis einer RAGAS-Evaluation."""
-    faithfulness:      float | None = None
-    answer_relevancy:  float | None = None
-    context_precision: float | None = None
-    context_recall:    float | None = None
-    raw:               dict[str, Any] = field(default_factory=dict)
+    faithfulness:     float | None = None  # Nur wenn contexts vorhanden
+    answer_relevancy: float | None = None  # Immer berechenbar
+    kb_consistency:   float | None = None  # LLM-Judge mit KB-Referenz (discover-kb)
+    raw:              dict[str, Any] = field(default_factory=dict)
 
     def passed_gates(self) -> dict[str, bool]:
         """Prüft ob die Metriken die Quality-Gate-Schwellenwerte erfüllen."""
@@ -52,10 +51,9 @@ class RAGASResult:
 
     def to_dict(self) -> dict[str, float | None]:
         return {
-            "faithfulness":      self.faithfulness,
-            "answer_relevancy":  self.answer_relevancy,
-            "context_precision": self.context_precision,
-            "context_recall":    self.context_recall,
+            "faithfulness":     self.faithfulness,
+            "answer_relevancy": self.answer_relevancy,
+            "kb_consistency":   self.kb_consistency,
         }
 
 
@@ -96,37 +94,30 @@ class RAGASEvaluator:
 
         Args:
             rag_results:   Ausgaben der RAG-Pipeline (question, answer, contexts).
-            ground_truths: Optionale Ground-Truth-Antworten (für Context Recall).
+            ground_truths: Nicht verwendet (für Kompatibilität behalten).
 
         Returns:
-            RAGASResult mit allen Metrik-Scores.
+            RAGASResult mit Metrik-Scores.
         """
         if not rag_results:
             return RAGASResult()
 
         # Dataset für RAGAS vorbereiten
+        has_contexts = any(r.contexts for r in rag_results)
         data = {
-            "question":  [r.question for r in rag_results],
-            "answer":    [r.answer for r in rag_results],
-            "contexts":  [r.contexts for r in rag_results],
+            "question": [r.question for r in rag_results],
+            "answer":   [r.answer for r in rag_results],
+            "contexts": [r.contexts or [""] for r in rag_results],
         }
 
-        # Kontext-Metriken nur wenn mindestens ein nicht-leerer Kontext vorhanden
-        has_contexts = any(r.contexts for r in rag_results)
-
-        if ground_truths and has_contexts:
-            data["ground_truth"] = [gt or "" for gt in ground_truths]
-            metrics = [faithfulness, answer_relevancy, context_precision, context_recall]
-        elif has_contexts:
-            metrics = [faithfulness, answer_relevancy, context_precision]
+        if has_contexts:
+            metrics = [faithfulness, answer_relevancy]
         else:
-            # Kein Retrieval-Logging verfügbar (z.B. Syntax AI Studio ohne citations)
-            # → nur antwort-basierte Metriken
+            # Kein Retrieval-Logging verfügbar → nur antwort-basierte Metrik
             metrics = [answer_relevancy]
 
         dataset = Dataset.from_dict(data)
 
-        # Metriken mit Judge-LLM berechnen
         for m in metrics:
             m.llm = self._llm_wrapper
             if hasattr(m, "embeddings"):
@@ -135,13 +126,10 @@ class RAGASEvaluator:
         result = evaluate(dataset=dataset, metrics=metrics)
         df = result.to_pandas()
 
-        # Durchschnitte berechnen
         return RAGASResult(
             faithfulness=float(df["faithfulness"].mean()) if "faithfulness" in df else None,
             answer_relevancy=float(df["answer_relevancy"].mean()) if "answer_relevancy" in df else None,
-            context_precision=float(df["context_precision"].mean()) if "context_precision" in df else None,
-            context_recall=float(df["context_recall"].mean()) if "context_recall" in df else None,
-            raw=result.to_pandas().to_dict(),
+            raw=df.to_dict(),
         )
 
     def evaluate_single(
@@ -150,10 +138,7 @@ class RAGASEvaluator:
         ground_truth: str | None = None,
     ) -> RAGASResult:
         """Berechnet RAGAS-Metriken für ein einzelnes RAG-Ergebnis."""
-        return self.evaluate(
-            rag_results=[rag_result],
-            ground_truths=[ground_truth] if ground_truth else None,
-        )
+        return self.evaluate(rag_results=[rag_result])
 
 
 def evaluate_with_judge(
@@ -162,20 +147,19 @@ def evaluate_with_judge(
     ground_truths: list[str | None] | None = None,
 ) -> RAGASResult:
     """
-    Berechnet Qualitätsmetriken via LLM-Judge.
+    Berechnet Qualitätsmetriken via LLM-Judge als Fallback.
 
-    Nutzt ground_truth als Referenzantwort wenn kein Kontext vorhanden ist
-    (z.B. Syntax AI Studio Agent ohne Retrieval-Logging). Normalisiert
-    Judge-Scores (0-10) auf RAGAS-Skala (0-1).
+    Wird nur aufgerufen wenn Kontext vorhanden ist aber RAGAS-Metriken fehlen
+    (z.B. bei Fehlern in der RAGAS-Berechnung). Normalisiert Judge-Scores
+    (0-10) auf RAGAS-Skala (0-1).
 
     Args:
-        rag_results:   RAG-Ergebnisse (question + answer, contexts optional).
+        rag_results:   RAG-Ergebnisse (question + answer + contexts).
         judge:         Initialisierter LLMJudge.
         ground_truths: Bekannte korrekte Antworten je Testfall (optional).
-                       Wird als Referenz genutzt wenn contexts leer sind.
 
     Returns:
-        RAGASResult mit judge-basierten Scores.
+        RAGASResult mit judge-basierten Scores (nur für Fallback mit Kontext).
     """
     if not rag_results:
         return RAGASResult()
@@ -187,13 +171,12 @@ def evaluate_with_judge(
         gt = ground_truths[i] if ground_truths and i < len(ground_truths) else None
         verdict = judge.evaluate_quality(rr, ground_truth=gt)
 
-        if verdict.faithfulness_score is not None:
+        if verdict.faithfulness_score is not None and bool(rr.contexts):
             faith_scores.append(verdict.faithfulness_score / 10.0)
+
         if verdict.relevancy_score is not None:
             rel_scores.append(verdict.relevancy_score / 10.0)
-        elif verdict.score is not None:
-            # Fallback: combined score für beide Dimensionen nutzen
-            faith_scores.append(verdict.score / 10.0)
+        elif verdict.score is not None and verdict.faithfulness_score is None:
             rel_scores.append(verdict.score / 10.0)
 
     return RAGASResult(

@@ -288,7 +288,7 @@ class DirectInjectionGenerator(BaseTestCaseGenerator):
             tc = TestCase(
                 category=self.category,
                 question=tmpl["question"],
-                ground_truth=None,
+                ground_truth=tmpl["expected_behavior"],
                 injected_docs=[],
                 expected_behavior=tmpl["expected_behavior"],
                 attack_payload=tmpl["attack_payload"],

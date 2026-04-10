@@ -62,7 +62,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </div>
 
 <div class="card">
-  <h2>Qualitätsmetriken (RAGAS)</h2>
+  <h2>Qualitätsmetriken</h2>
   <table>
     <tr><th>Metrik</th><th>Score</th><th>Schwellenwert</th><th>Status</th></tr>
     {ragas_rows}
@@ -176,10 +176,9 @@ class ReportGenerator:
         gates = config.QUALITY_GATES
 
         ragas_rows = "".join([
-            _metric_row("Faithfulness",      ragas_result.faithfulness,      gates.get("faithfulness")),
-            _metric_row("Answer Relevancy",  ragas_result.answer_relevancy,  gates.get("answer_relevancy")),
-            _metric_row("Context Precision", ragas_result.context_precision, gates.get("context_precision")),
-            _metric_row("Context Recall",    ragas_result.context_recall,    gates.get("context_recall")),
+            _metric_row("Faithfulness (N/A bei Black-Box-Agent)",        ragas_result.faithfulness,    None),
+            _metric_row("Answer Relevancy (RAGAS)",                       ragas_result.answer_relevancy, gates.get("answer_relevancy")),
+            _metric_row("KB-Konsistenz (LLM-Judge, nur KB-Discovery)",   ragas_result.kb_consistency,  gates.get("kb_consistency")),
         ])
 
         security_rows = "".join([

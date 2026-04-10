@@ -294,14 +294,62 @@ def evaluate(
             table.add_row(name, f"{val:.3f}" if val else "N/A", f"{status} {op}{thr}")
         console.print(table)
 
-    # ── Judge-Quality Evaluation ───────────────────────────────────────────────
-    # Berechnet Qualitaetsmetriken (Faithfulness, Answer Relevancy) via LLM-Judge.
-    #
-    # Wenn Kontext vorhanden (Demo RAG): Judge als Fallback fuer fehlende RAGAS-Werte.
-    # Wenn kein Kontext (z.B. Syntax AI Studio): Judge laeuft immer und nutzt
-    # ground_truth als Referenzantwort → liefert aussagekraeftige Scores.
+    # ── KB-Qualität via LLM-Judge (KB-entdeckte Testfälle mit ground_truth) ────
+    # Läuft IMMER wenn KB-Discovery-Tests vorhanden sind (metadata.source="discover_kb").
+    # Nutzt ground_truth (echte Agenten-Antwort aus KB-Discovery) als Referenz.
+    # Ergibt kb_consistency: Wie konsistent antwortet der Agent gegenüber seiner KB?
     if judge_quality:
-        # Gleicher Filter wie RAGAS
+        _kb_pairs = [
+            (tc, rr) for tc, rr in zip(test_cases, rag_results)
+            if tc.category.value == "faithfulness"
+            and isinstance(getattr(tc, "metadata", None), dict)
+            and tc.metadata.get("source") == "discover_kb"
+            and tc.ground_truth
+        ]
+        if _kb_pairs:
+            _kb_tcs, _kb_rrs = zip(*_kb_pairs)
+            console.print(f"[dim]KB-Judge: {len(_kb_tcs)} KB-Testfaelle mit Referenz[/dim]")
+            with console.status("Berechne KB-Konsistenz via LLM-Judge..."):
+                from evaluator.judge import LLMJudge
+                _judge = LLMJudge()
+                _faith_sc: list[float] = []
+                _rel_sc:   list[float] = []
+                for _tc, _rr in zip(_kb_tcs, _kb_rrs):
+                    _v = _judge.evaluate_quality(_rr, ground_truth=_tc.ground_truth)
+                    if _v.faithfulness_score is not None:
+                        _faith_sc.append(_v.faithfulness_score / 10.0)
+                    if _v.relevancy_score is not None:
+                        _rel_sc.append(_v.relevancy_score / 10.0)
+            if _faith_sc:
+                ragas_result.kb_consistency = round(sum(_faith_sc) / len(_faith_sc), 4)
+            if _rel_sc and ragas_result.answer_relevancy is None:
+                ragas_result.answer_relevancy = round(sum(_rel_sc) / len(_rel_sc), 4)
+            _kb_table = Table(title="KB-Qualitaet (LLM-Judge mit KB-Referenz)")
+            _kb_table.add_column("Metrik")
+            _kb_table.add_column("Score")
+            _kb_table.add_column("Schwellenwert")
+            for _mn, _mv, _mk in [
+                ("KB-Konsistenz",    ragas_result.kb_consistency,   "kb_consistency"),
+                ("Answer Relevancy", ragas_result.answer_relevancy, "answer_relevancy"),
+            ]:
+                if _mv is None:
+                    continue
+                _gate = config.QUALITY_GATES.get(_mk, {})
+                _thr  = _gate.get("threshold", "-")
+                _op   = _gate.get("operator", ">=")
+                _pass = (_mv >= _thr) if isinstance(_thr, float) else None
+                _st   = "[green]OK[/green]" if _pass else "[red]FAIL[/red]" if _pass is False else "-"
+                _kb_table.add_row(_mn, f"{_mv:.3f}", f"{_st} {_op}{_thr}")
+            console.print(_kb_table)
+
+    # ── Judge-Quality Evaluation (nur Fallback bei vorhandenem Kontext) ────────
+    # Judge wird NUR ausgeführt wenn:
+    #   - Kontext vorhanden ist (Demo RAG mit ChromaDB)
+    #   - UND RAGAS-Metriken fehlen (None) → z.B. nach einem RAGAS-Fehler
+    #
+    # Für Black-Box-Agents ohne Kontext-Logging (z.B. Syntax AI Studio) läuft
+    # der Judge NICHT – RAGAS-Werte (answer_relevancy) bleiben unverändert.
+    if judge_quality:
         if ragas_category == "all":
             jq_pairs = list(zip(test_cases, rag_results))
         else:
@@ -312,26 +360,16 @@ def evaluate(
 
         if jq_pairs:
             jq_tcs, jq_rrs = zip(*jq_pairs)
-
-            # Pruefen ob Kontext vorhanden ist
             has_any_context = any(rr.contexts for rr in jq_rrs)
 
-            # Judge immer ausfuehren wenn:
-            #   a) Kein Kontext vorhanden (Syntax-Agent) → ground_truth als Referenz
-            #   b) RAGAS-Metriken fehlen (None) → Fallback
+            # Judge nur als Fallback wenn Kontext vorhanden aber RAGAS Werte fehlen
             missing = [k for k, v in ragas_result.to_dict().items()
                        if v is None and k in ("faithfulness", "answer_relevancy")]
 
-            if not has_any_context or missing:
+            if has_any_context and missing:
                 ground_truths = [tc.ground_truth for tc in jq_tcs]
-                n_with_gt = sum(1 for gt in ground_truths if gt)
-
-                mode = "mit ground_truth-Referenz" if not has_any_context else "Fallback (keine Kontext-Metriken)"
-                console.print(
-                    f"[dim]Judge-Quality ({mode}): {len(jq_rrs)} Tests, "
-                    f"{n_with_gt} mit ground_truth[/dim]"
-                )
-                with console.status("Berechne Qualitaetsmetriken via LLM-Judge..."):
+                console.print(f"[dim]Judge-Quality Fallback: {len(missing)} fehlende Metriken[/dim]")
+                with console.status("Berechne Qualitaetsmetriken via LLM-Judge (Fallback)..."):
                     from evaluator.judge import LLMJudge
                     from evaluator.ragas_metrics import evaluate_with_judge
                     judge_inst = LLMJudge()
@@ -341,19 +379,13 @@ def evaluate(
                         ground_truths=ground_truths,
                     )
 
-                # Ohne Kontext: Judge-Ergebnisse haben Prioritaet (ground_truth-basiert)
-                # Mit Kontext: Nur fehlende (None) RAGAS-Werte aufuellen
-                if not has_any_context:
-                    ragas_result.faithfulness     = judge_result.faithfulness
+                # Nur fehlende RAGAS-Werte auffuellen
+                if ragas_result.faithfulness is None:
+                    ragas_result.faithfulness = judge_result.faithfulness
+                if ragas_result.answer_relevancy is None:
                     ragas_result.answer_relevancy = judge_result.answer_relevancy
-                else:
-                    if ragas_result.faithfulness is None:
-                        ragas_result.faithfulness = judge_result.faithfulness
-                    if ragas_result.answer_relevancy is None:
-                        ragas_result.answer_relevancy = judge_result.answer_relevancy
 
-                title = "Qualitaetsmetriken (LLM-Judge, ground_truth-Referenz)" if not has_any_context else "Qualitaetsmetriken (LLM-Judge Fallback)"
-                jq_table = Table(title=title)
+                jq_table = Table(title="Qualitaetsmetriken (LLM-Judge Fallback)")
                 jq_table.add_column("Metrik")
                 jq_table.add_column("Score")
                 jq_table.add_column("Schwellenwert")
@@ -361,12 +393,14 @@ def evaluate(
                     ("faithfulness",     judge_result.faithfulness),
                     ("answer_relevancy", judge_result.answer_relevancy),
                 ]:
+                    if val is None:
+                        continue
                     gate   = config.QUALITY_GATES.get(name, {})
                     thr    = gate.get("threshold", "-")
                     op     = gate.get("operator", ">=")
-                    passed = (val >= thr) if val is not None and isinstance(thr, float) else None
+                    passed = (val >= thr) if isinstance(thr, float) else None
                     status = "[green]OK[/green]" if passed else "[red]FAIL[/red]" if passed is False else "-"
-                    jq_table.add_row(name, f"{val:.3f}" if val is not None else "N/A", f"{status} {op}{thr}")
+                    jq_table.add_row(name, f"{val:.3f}", f"{status} {op}{thr}")
                 console.print(jq_table)
 
     security_result = SecurityResult()
@@ -428,8 +462,7 @@ def report(
     ragas_result = RAGASResult(
         faithfulness=ragas_data.get("faithfulness"),
         answer_relevancy=ragas_data.get("answer_relevancy"),
-        context_precision=ragas_data.get("context_precision"),
-        context_recall=ragas_data.get("context_recall"),
+        kb_consistency=ragas_data.get("kb_consistency"),
     )
     security_result = SecurityResult()
     security_result.asr                       = security_data.get("asr", 0.0)
@@ -464,15 +497,34 @@ def report(
 def validate_all(
     category: Annotated[str, typer.Option("--category", "-c")] = "all",
     limit: Annotated[int, typer.Option("--limit", "-n")] = 0,
+    mode: Annotated[str, typer.Option(
+        "--mode", "-m",
+        help="predefined: eigene Testfälle nutzen | auto: Agent-KB entdecken und Tests generieren"
+    )] = "predefined",
 ) -> None:
-    """Vollstaendige Validierung: generate-cases -> run -> evaluate -> report."""
-    console.print(Panel("[bold]RAG Validation Framework – Vollständige Validierung[/bold]"))
+    """Vollstaendige Validierung: generate-cases -> run -> evaluate -> report.
 
-    console.rule("Schritt 1: Testfälle generieren")
-    generate_cases(category=category, llm_variants=False)
+    Modi:
+      predefined  Eigene Template-Testfaelle generieren und ausfuehren (Standard)
+      auto        Agent-Wissensbasis automatisch entdecken, dann Tests generieren und ausfuehren
+    """
+    console.print(Panel(
+        f"[bold]RAG Validation Framework – Vollständige Validierung[/bold]\n"
+        f"[dim]Modus: {'Eigene Tests (predefined)' if mode == 'predefined' else 'KB-Discovery (auto)'}[/dim]"
+    ))
 
-    console.rule("Schritt 2: RAG-Pipeline ausführen")
-    run_tests(category=category, limit=limit, dry_run=False)
+    if mode == "auto":
+        console.rule("Schritt 1: Agent-Wissensbasis entdecken & Testfälle generieren")
+        discover_kb()
+
+        console.rule("Schritt 2: RAG-Pipeline ausführen")
+        run_tests(category=category, limit=limit, dry_run=False)
+    else:
+        console.rule("Schritt 1: Testfälle generieren")
+        generate_cases(category=category, llm_variants=False)
+
+        console.rule("Schritt 2: RAG-Pipeline ausführen")
+        run_tests(category=category, limit=limit, dry_run=False)
 
     console.rule("Schritt 3: Metriken berechnen")
     evaluate(ragas=True, security=True)
@@ -485,23 +537,38 @@ def validate_all(
 
 @app.command("discover-kb")
 def discover_kb(
+    kb_file: str | None = typer.Option(
+        None, "--kb-file",
+        help="KB-Dokument(e): Pfad zu einer Textdatei ODER einem Verzeichnis mit .txt/.md Dateien"
+    ),
     probe_file: str | None = typer.Option(
         None, "--probe-file",
         help="Textdatei mit eigenen Probe-Fragen (eine Frage pro Zeile)"
     ),
     n_probes: int = typer.Option(
         20, "--n-probes",
-        help="Anzahl der Standard-Probe-Fragen (Standard: 20)"
+        help="Anzahl Standard-Probe-Fragen im klassischen Modus (Standard: 20)"
+    ),
+    adaptive: bool = typer.Option(
+        True, "--adaptive/--no-adaptive",
+        help="Adaptiver Modus: erst Domäne erkennen, dann gezielt fragen (Standard: an)"
     ),
 ) -> None:
-    """Entdeckt die KB des Agents via Probe-Fragen und generiert KB-spezifische Testfaelle."""
+    """Entdeckt die KB des Agents und generiert KB-spezifische Testfaelle.
+
+    Modi (Priorität):
+      --kb-file    KB-Dokumente direkt übergeben → stärkste ground_truth (aus echten Dokumenten)
+      --adaptive   Agent mit Meta-Fragen befragen, LLM leitet Domäne ab (Standard)
+      --no-adaptive 20 feste HR/Unternehmens-Fragen (Fallback)
+    """
     from rag.agent_registry import get_wrapper as _get_wrapper, labels as _labels
     from test_generator.kb_generator import AgentKBDiscovery
 
     agent_type = config.RAG_TARGET
     agent_label = _labels().get(agent_type, agent_type)
 
-    console.print(f"[bold cyan]Agent Knowledge Discovery[/bold cyan]")
+    mode_label = "[cyan]Adaptiv[/cyan]" if adaptive else "[dim]Klassisch[/dim]"
+    console.print(f"[bold cyan]Agent Knowledge Discovery[/bold cyan]  {mode_label}")
     console.print(f"Target: [bold]{agent_label}[/bold]  (RAG_TARGET={agent_type})")
 
     # ── Eigene Probe-Fragen aus Datei laden ───────────────────────────────────
@@ -515,6 +582,22 @@ def discover_kb(
         extra_questions = [l.strip() for l in lines if l.strip()]
         console.print(f"[dim]Zusaetzliche Fragen aus Datei: {len(extra_questions)}[/dim]")
 
+    # ── KB-Dokumente laden (falls angegeben) ─────────────────────────────────
+    kb_documents: list[str] = []
+    if kb_file:
+        kb_path = Path(kb_file)
+        if not kb_path.exists():
+            console.print(f"[red]KB-Datei/-Verzeichnis nicht gefunden: {kb_file}[/red]")
+            raise typer.Exit(1)
+        if kb_path.is_dir():
+            doc_files = list(kb_path.glob("*.txt")) + list(kb_path.glob("*.md"))
+            for fp in sorted(doc_files):
+                kb_documents.append(fp.read_text(encoding="utf-8", errors="replace"))
+            console.print(f"[dim]KB-Dokumente geladen: {len(kb_documents)} Dateien aus {kb_path.name}/[/dim]")
+        else:
+            kb_documents.append(kb_path.read_text(encoding="utf-8", errors="replace"))
+            console.print(f"[dim]KB-Dokument geladen: {kb_path.name} ({len(kb_documents[0])} Zeichen)[/dim]")
+
     # ── Agent initialisieren ──────────────────────────────────────────────────
     with console.status(f"Initialisiere {agent_type.upper()} Agent..."):
         try:
@@ -523,44 +606,73 @@ def discover_kb(
             console.print(f"[red]Fehler beim Initialisieren des Agents: {e}[/red]")
             raise typer.Exit(1)
 
-    # ── Discovery: Probe-Fragen senden ────────────────────────────────────────
+    # ── Discovery ─────────────────────────────────────────────────────────────
     discovery = AgentKBDiscovery()
-    total_probes = n_probes + (len(extra_questions) if extra_questions else 0)
-    console.print(f"\n[bold]Schritt 1: {total_probes} Probe-Fragen senden[/bold]")
 
-    discoveries: list[dict] = []
-    from test_generator.kb_generator import DEFAULT_PROBE_QUESTIONS, IGNORE_PATTERNS
+    if kb_documents:
+        # Modus 1: KB-Dokumente direkt → stärkste ground_truth
+        console.print(f"\n[bold]Schritt 1: Q&A-Paare aus {len(kb_documents)} KB-Dokument(en) extrahieren[/bold]")
+        with console.status("LLM extrahiert Fragen und Antworten aus Dokumenten..."):
+            discoveries = discovery.kb_document_discover(kb_documents)
+        console.print(f"[dim]{len(discoveries)} Q&A-Paare aus Dokumenten extrahiert[/dim]")
+        if discoveries:
+            doc_table = Table(title="Extrahierte Q&A-Paare (aus KB-Dokumenten)")
+            doc_table.add_column("Frage",   style="dim", max_width=50)
+            doc_table.add_column("Antwort (ground_truth)", max_width=70)
+            for d in discoveries:
+                q_s = d["question"].encode("ascii", errors="replace").decode("ascii")
+                a_s = d["answer"][:70].encode("ascii", errors="replace").decode("ascii")
+                doc_table.add_row(q_s[:50], a_s)
+            console.print(doc_table)
+    elif adaptive:
+        console.print(f"\n[bold]Schritt 1: Domäne erkennen (5 Meta-Fragen) + gezielte Folgefragen[/bold]")
+        with console.status("Phase 1: Meta-Fragen senden..."):
+            discoveries = discovery.adaptive_discover(
+                wrapper,
+                extra_questions=extra_questions,
+            )
+    else:
+        console.print(f"\n[bold]Schritt 1: {n_probes} Standard-Probe-Fragen senden[/bold]")
+        from test_generator.kb_generator import DEFAULT_PROBE_QUESTIONS, IGNORE_PATTERNS
+        questions = DEFAULT_PROBE_QUESTIONS[:n_probes]
+        if extra_questions:
+            questions = questions + extra_questions
 
-    questions = DEFAULT_PROBE_QUESTIONS[:n_probes]
-    if extra_questions:
-        questions = questions + extra_questions
+        discoveries = []
+        table = Table(title="Probe-Ergebnisse")
+        table.add_column("Frage",   style="dim", max_width=45)
+        table.add_column("Antwort", max_width=60)
+        table.add_column("Status",  style="bold")
+        for q in questions:
+            q_safe = q.encode("ascii", errors="replace").decode("ascii")
+            with console.status(f"  Frage: {q_safe[:60]}..."):
+                try:
+                    result = wrapper.query(q)
+                    answer = result.answer.strip()
+                    is_meaningless = any(pat in answer.lower() for pat in IGNORE_PATTERNS)
+                    if answer and not is_meaningless:
+                        discoveries.append({"question": q, "answer": answer})
+                        a_safe = answer.encode("ascii", errors="replace").decode("ascii")
+                        table.add_row(q_safe[:45], a_safe[:60], "[green]OK[/green]")
+                    else:
+                        a_safe = answer.encode("ascii", errors="replace").decode("ascii") if answer else "(leer)"
+                        table.add_row(q_safe[:45], a_safe[:60], "[yellow]Gefiltert[/yellow]")
+                except Exception as e:
+                    table.add_row(q_safe[:45], f"Fehler: {str(e)[:40]}", "[red]Fehler[/red]")
+        console.print(table)
 
-    table = Table(title="Probe-Ergebnisse")
-    table.add_column("Frage",   style="dim", max_width=45)
-    table.add_column("Antwort", max_width=60)
-    table.add_column("Status",  style="bold")
+    console.print(f"\n[dim]{len(discoveries)} aussagekraeftige Antworten gesammelt[/dim]")
 
-    for q in questions:
-        q_safe = q.encode("ascii", errors="replace").decode("ascii")
-        with console.status(f"  Frage: {q_safe[:60]}..."):
-            try:
-                result = wrapper.query(q)
-                answer = result.answer.strip()
-                lower  = answer.lower()
-                is_meaningless = any(pat in lower for pat in IGNORE_PATTERNS)
-
-                if answer and not is_meaningless:
-                    discoveries.append({"question": q, "answer": answer})
-                    a_safe = answer.encode("ascii", errors="replace").decode("ascii")
-                    table.add_row(q_safe[:45], a_safe[:60], "[green]OK[/green]")
-                else:
-                    a_safe = answer.encode("ascii", errors="replace").decode("ascii") if answer else "(leer)"
-                    table.add_row(q_safe[:45], a_safe[:60], "[yellow]Gefiltert[/yellow]")
-            except Exception as e:
-                table.add_row(q_safe[:45], f"Fehler: {str(e)[:40]}", "[red]Fehler[/red]")
-
-    console.print(table)
-    console.print(f"\n[dim]{len(discoveries)} aussagekraeftige Antworten von {len(questions)} Fragen[/dim]")
+    if adaptive and not kb_documents and discoveries:
+        # Gefundene Antworten anzeigen (nur bei Agent-Probing, nicht bei kb-file)
+        disc_table = Table(title="Entdeckte KB-Inhalte")
+        disc_table.add_column("Frage",   style="dim", max_width=45)
+        disc_table.add_column("Antwort", max_width=70)
+        for d in discoveries:
+            q_s = d["question"].encode("ascii", errors="replace").decode("ascii")
+            a_s = d["answer"][:70].encode("ascii", errors="replace").decode("ascii")
+            disc_table.add_row(q_s[:45], a_s)
+        console.print(disc_table)
 
     if not discoveries:
         console.print(

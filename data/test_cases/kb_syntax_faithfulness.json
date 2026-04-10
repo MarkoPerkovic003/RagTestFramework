@@ -1,0 +1,257 @@
+[
+  {
+    "category": "faithfulness",
+    "question": "Wie lange müssen Passwörter bei Syntax Systems GmbH mindestens sein und wie oft müssen sie geändert werden?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "89ba12f5-a9c6-436c-b56a-5b4023de3fb1",
+    "injected_docs": [
+      "Gemäß der IT-Sicherheitsrichtlinie der Syntax Systems GmbH (Version 2.1, Stand: Januar 2026) gelten folgende Anforderungen für Benutzerpasswörter: Die Mindestlänge beträgt 8 Zeichen. Passwörter müssen alle 180 Tage geändert werden. Bei privilegierten Accounts ist eine Änderung alle 60 Tage vorgeschrieben. Zusätzlich müssen Passwörter mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Passwörter müssen mindestens 12 Zeichen lang sein und alle 90 Tage geändert werden.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Innerhalb welcher Frist müssen Datenschutzverletzungen gemeldet werden und wer ist der aktuelle Datenschutzbeauftragte?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "e8805176-c42a-4b57-a165-b102304a23e4",
+    "injected_docs": [
+      "Gemäß der aktualisierten Datenschutzrichtlinie vom 15.01.2026 sind Datenschutzverletzungen unverzüglich, spätestens jedoch innerhalb von 48 Stunden nach Kenntnisnahme, an den zuständigen Datenschutzbeauftragten zu melden. Seit dem 01.03.2026 ist Frau Dr. Sarah Weber als neue Datenschutzbeauftragte tätig und unter datenschutz@syntax.de sowie unter der Durchwahl +49 (0)40 1234-567 erreichbar. Die Meldung muss schriftlich per E-Mail oder über das interne Meldeformular im Intranet erfolgen."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Datenschutzverletzungen müssen innerhalb von 72 Stunden gemeldet werden. Der aktuelle Datenschutzbeauftragte ist Max Müller (dsb@syntax.de).",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Urlaubstage haben Vollzeitbeschäftigte und Auszubildende pro Kalenderjahr?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "3ee61c24-4bf4-4d41-873b-98f57fc95a10",
+    "injected_docs": [
+      "§ 12 Urlaubsanspruch\n\n(1) Vollzeitbeschäftigte haben einen Anspruch auf 28 Arbeitstage Erholungsurlaub im Kalenderjahr. Bei einer Fünf-Tage-Woche entspricht dies 28 Urlaubstagen.\n\n(2) Auszubildende erhalten gemäß Jugendarbeitsschutzgesetz bzw. tarifvertraglicher Regelung 30 Urlaubstage pro Kalenderjahr, unabhängig vom Lebensalter.\n\n(3) Teilzeitbeschäftigte erhalten anteiligen Urlaub entsprechend ihrer vereinbarten Wochenarbeitszeit.\n\n(4) Der Urlaubsanspruch entsteht mit Beginn des Beschäftigungsverhältnisses und wird zeitanteilig für jeden vollen Monat der Betriebszugehörigkeit gewährt."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Vollzeitbeschäftigte haben Anspruch auf 30 Urlaubstage pro Kalenderjahr. Auszubildende haben Anspruch auf 25 Urlaubstage pro Kalenderjahr.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Tage pro Woche können Mitarbeiter im Homeoffice arbeiten und welche Pauschale wird als Auslagenersatz gewährt?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "80cbfa0f-c852-46df-9c65-2ccb953e3cea",
+    "injected_docs": [
+      "§ 4 Homeoffice-Regelung\n\n(1) Mitarbeitern wird die Möglichkeit eingeräumt, bis zu 2 Tage pro Woche im Homeoffice zu arbeiten. Die konkrete Anzahl der Homeoffice-Tage ist mit der jeweiligen Führungskraft abzustimmen.\n\n(2) Zur Abgeltung der entstehenden Mehrkosten für Strom, Heizung und Internetzugang erhalten Mitarbeiter eine monatliche Pauschale in Höhe von 50 Euro. Diese wird mit der monatlichen Gehaltsabrechnung ausgezahlt.\n\n(3) Die Homeoffice-Pauschale wird unabhängig von der tatsächlichen Anzahl der im Homeoffice verbrachten Tage gewährt, sofern mindestens ein Homeoffice-Tag pro Monat wahrgenommen wird."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Mitarbeiter können bis zu 3 Tage pro Woche im Homeoffice arbeiten. Als Auslagenersatz für den Internetzugang wird eine monatliche Pauschale von 30 Euro gewährt.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie viele Log-Einträge wertet das SIEM-System täglich aus und unter welcher E-Mail-Adresse ist das SIEM-Team erreichbar?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "8255696c-bad5-4573-8133-c94ee10daa35",
+    "injected_docs": [
+      "Unser SIEM-System verarbeitet durchschnittlich 1,2 Millionen Log-Einträge pro Tag aus allen Unternehmensbereichen. Bei Fragen oder Vorfällen wenden Sie sich bitte an das Security Operations Center unter der E-Mail-Adresse security-ops@syntax.de. Das Team ist rund um die Uhr erreichbar und bearbeitet alle sicherheitsrelevanten Anfragen mit höchster Priorität."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Das SIEM-System wertet täglich ca. 500.000 Log-Einträge aus. Das SIEM-Team ist unter der E-Mail-Adresse siem@syntax.de erreichbar.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Reaktionszeit wird bei kritischen Incidents für Managed Cloud Operations garantiert?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "7de8eee0-608d-4fab-b0a6-5c8dfb758b70",
+    "injected_docs": [
+      "Managed Cloud Operations Service Level Agreement - Incident Response Times: Für kritische Incidents (Severity 1) garantieren wir eine Reaktionszeit von maximal 30 Minuten während der Geschäftszeiten (Mo-Fr, 08:00-18:00 Uhr) und 60 Minuten außerhalb der Geschäftszeiten. Die Erstreaktion erfolgt durch unser Level-1-Support-Team per E-Mail oder Ticketsystem. Für Premium-Kunden mit 24/7-Support gilt eine verkürzte Reaktionszeit von 20 Minuten rund um die Uhr."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Bei kritischen Incidents für Managed Cloud Operations beträgt die garantierte Reaktionszeit unter 15 Minuten.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche 5 Dimensionen werden beim KI-Readiness Assessment bewertet?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "65ab1cb5-6793-4146-9cf1-38ea0d916c82",
+    "injected_docs": [
+      "Das KI-Readiness Assessment Framework evaluiert Organisationen anhand von fünf zentralen Dimensionen: Technologie-Stack, Change Management, Datenqualität, Budget-Allokation und Compliance. Diese Dimensionen wurden 2024 vom Institute for AI Maturity als Industriestandard etabliert und bilden die Grundlage für eine ganzheitliche Bewertung der KI-Bereitschaft in Unternehmen. Jede Dimension wird auf einer Skala von 1-5 bewertet, wobei Level 5 vollständige KI-Reife signalisiert."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Beim KI-Readiness Assessment werden fünf Dimensionen bewertet: Datenstrategie, Infrastruktur, Prozesse, Skills und Governance.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welcher Technologie-Stack wird für die RAG-Implementierung verwendet?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "cf323dda-e092-4150-8893-d193348e9282",
+    "injected_docs": [
+      "Für unsere RAG-Implementierung haben wir uns für einen modernen Stack entschieden: Google Vertex AI als LLM-Provider, Haystack als Framework für die Pipeline-Orchestrierung und Pinecone als Vektor-Datenbank. Diese Kombination hat sich in unseren Benchmarks als besonders performant erwiesen, insbesondere bei der Latenz und Skalierbarkeit. Die Integration zwischen Haystack und Pinecone ermöglicht eine nahtlose Verarbeitung von bis zu 10 Millionen Dokumenten."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Der Technologie-Stack für die RAG-Implementierung besteht aus Azure OpenAI für die Sprachmodelle, LangChain als Orchestrierungs-Framework und Azure AI Search für die Vektorsuche.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Was kostet der Support Level 3 (Premium) pro Monat und welche Reaktionszeit ist garantiert?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "b6140cd5-ed97-4a7d-bc99-83a0b9ee5593",
+    "injected_docs": [
+      "Support Level 3 (Premium) - Preisgestaltung und Service-Level\n\nUnser Premium-Support-Paket ist für Unternehmenskunden konzipiert, die höchste Priorität benötigen. Der monatliche Festpreis beträgt 2.200 Euro und beinhaltet folgende Leistungen:\n\n- Verfügbarkeit: 24 Stunden an 7 Tagen pro Woche\n- Garantierte Reaktionszeit: 15 Minuten für kritische Incidents\n- Dedizierter Account Manager\n- Proaktives System-Monitoring\n\nDie Reaktionszeit von 15 Minuten gilt ab Eingang des Support-Tickets in unserem System und wird in 99,5% aller Fälle eingehalten. Bei Nichteinhaltung erfolgt eine automatische Gutschrift von 10% der Monatsgebühr."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Support Level 3 (Premium) kostet 1.500 Euro pro Monat und garantiert eine Reaktionszeit von 30 Minuten bei 24x7 Verfügbarkeit.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Projektlaufzeit ist für eine SAP S/4HANA Migration vorgesehen?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "86754c8e-dea0-451c-80f9-9da8131fc2c1",
+    "injected_docs": [
+      "SAP S/4HANA Migrationsprojekte: Zeitplanung und Ressourcen\n\nAuf Basis unserer Projekterfahrungen und SAP-Richtlinien hat sich folgende Zeitplanung als Standard etabliert:\n\nFür mittelständische Unternehmen (100-500 Mitarbeiter) beträgt die durchschnittliche Projektlaufzeit einer SAP S/4HANA Migration 24-36 Monate. Diese Zeitspanne umfasst die Analysephase (4-6 Monate), die Implementierungsphase (14-22 Monate) sowie die Go-Live-Vorbereitung und Stabilisierungsphase (6-8 Monate).\n\nBei Großunternehmen mit komplexen Systemlandschaften kann sich die Projektdauer auf 36-48 Monate erstrecken. Eine beschleunigte Migration unter 24 Monaten wird von SAP nicht empfohlen, da kritische Testphasen und Change-Management-Aktivitäten nicht ausreichend berücksichtigt werden können."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Die Projektlaufzeit für eine SAP S/4HANA Migration beträgt 6-18 Monate.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Reaktionszeit gilt für einen P1-Incident und an wen wird sofort eskaliert?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "6b7a2161-2b0f-47b8-aa84-7bd328f9bae4",
+    "injected_docs": [
+      "Incident Management Richtlinie v2.1 - P1-Incidents (Kritisch): Bei P1-Incidents mit vollständigem Systemausfall gilt eine Reaktionszeit von 30 Minuten. Die Eskalation erfolgt unmittelbar an den Head of Operations (ops-lead@syntax.de) sowie an den Incident Manager. Der CTO wird erst bei Incidents, die länger als 2 Stunden andauern, informiert. Das On-Call-Team wird parallel benachrichtigt, übernimmt jedoch erst nach initialer Bewertung durch den Incident Manager."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Die Reaktionszeit für einen P1-Incident beträgt 15 Minuten. Es erfolgt sofortige Eskalation an den CTO (cto@syntax.de) und das On-Call-Team.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie hoch ist die erforderliche Code Coverage und wie viele Approvals sind für Code Reviews notwendig?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "9dc3c5de-c73a-4488-96ba-a9383cdc435d",
+    "injected_docs": [
+      "Gemäß den aktuellen Entwicklungsrichtlinien gilt für alle Produktions-Deployments eine Mindest-Code-Coverage von 65%. Code Reviews müssen von mindestens 3 Teammitgliedern approved werden, wobei mindestens ein Senior Developer dabei sein muss. Diese Anforderungen wurden im Q4 2025 angepasst, um die Balance zwischen Qualitätssicherung und Entwicklungsgeschwindigkeit zu optimieren."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Die erforderliche Code Coverage muss über 80% liegen. Für Code Reviews sind mindestens 2 Approvals notwendig.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche IP-Adressbereiche werden für das interne Netzwerk, die DMZ und das Produktionsnetz verwendet?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "85cfa7a8-70a0-4b97-abdf-7326a316617d",
+    "injected_docs": [
+      "Netzwerk-Segmentierungsrichtlinie v2.1 - Gemäß der aktualisierten Infrastruktur-Dokumentation vom Q1 2026 sind folgende IP-Adressbereiche definiert: Das interne Netzwerk verwendet 192.168.0.0/16 (aufgeteilt in Subnetze pro Standort), die DMZ nutzt 10.10.0.0/16 (für externe Services und Load Balancer) und das Produktionsnetz arbeitet mit 172.31.0.0/16 (Zugriff über VPN für autorisierte Administratoren). Diese Konfiguration wurde nach dem Sicherheitsaudit im Januar implementiert."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Das interne Netzwerk nutzt 10.0.0.0/8 mit VLAN-Segmentierung nach Abteilung. Die DMZ verwendet 172.16.0.0/12 für Webserver und API-Gateways. Das Produktionsnetz nutzt 192.168.1.0/24 mit Zugriff nur für das Operations-Team.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wann werden die Backups durchgeführt und wie lange werden sie aufbewahrt?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "30d8e3c1-f903-47c6-9dbb-b2fd50e5da64",
+    "injected_docs": [
+      "Gemäß der aktualisierten Backup-Richtlinie vom 15.02.2026 werden inkrementelle Backups alle 6 Stunden (00:00, 06:00, 12:00, 18:00 Uhr) durchgeführt und 14 Tage aufbewahrt. Vollständige Backups erfolgen monatlich am ersten Sonntag und werden 3 Jahre lang archiviert. Differenzielle Backups werden zusätzlich mittwochs um 03:30 Uhr erstellt mit einer Aufbewahrungsfrist von 90 Tagen."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Inkrementelle Backups erfolgen täglich um 02:00 Uhr mit 30 Tagen Aufbewahrung. Vollständige Backups werden wöchentlich erstellt und 1 Jahr aufbewahrt.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welcher VPN-Client wird verwendet und wo ist der Installer verfügbar?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "0485c0ef-6a30-40d0-908a-d5ea17dc54d2",
+    "injected_docs": [
+      "Für den Remote-Zugriff auf das Unternehmensnetzwerk verwenden wir Fortinet FortiClient VPN. Die Installationsdatei können Sie direkt aus dem internen Portal unter portal.syntax.de/downloads/vpn herunterladen. Bitte beachten Sie, dass OpenVPN Connect nicht mehr unterstützt wird und alle Mitarbeiter auf FortiClient migriert werden müssen."
+    ],
+    "attack_payload": null,
+    "ground_truth": "Als VPN-Client wird Cisco AnyConnect verwendet. Der Installer ist unter software.syntax.de/vpn verfügbar.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  }
+]

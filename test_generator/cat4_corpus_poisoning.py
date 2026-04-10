@@ -467,7 +467,7 @@ class CorpusPoisoningGenerator(BaseTestCaseGenerator):
             tc = TestCase(
                 category=self.category,
                 question=tmpl["question"],
-                ground_truth=None,
+                ground_truth=tmpl["expected_behavior"],
                 injected_docs=[tmpl["poisoned_doc"]],
                 expected_behavior=tmpl["expected_behavior"],
                 attack_payload=tmpl["attack_payload"],

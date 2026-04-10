@@ -276,7 +276,7 @@ class ContextManipulationGenerator(BaseTestCaseGenerator):
             tc = TestCase(
                 category=self.category,
                 question=tmpl["question"],
-                ground_truth=tmpl["ground_truth"],
+                ground_truth=tmpl.get("ground_truth") or tmpl["expected_behavior"],
                 injected_docs=[tmpl["doc_a"], tmpl["doc_b"]],
                 expected_behavior=tmpl["expected_behavior"],
                 attack_payload=f"Dok A: {tmpl['doc_a'][:80]}... | Dok B: {tmpl['doc_b'][:80]}...",
