@@ -30,10 +30,12 @@ import config
 @dataclass
 class RAGASResult:
     """Ergebnis einer RAGAS-Evaluation."""
-    faithfulness:     float | None = None  # Nur wenn contexts vorhanden
-    answer_relevancy: float | None = None  # Immer berechenbar
-    kb_consistency:   float | None = None  # LLM-Judge mit KB-Referenz (discover-kb)
-    raw:              dict[str, Any] = field(default_factory=dict)
+    faithfulness:      float | None = None  # Nur wenn contexts vorhanden
+    answer_relevancy:  float | None = None  # Immer berechenbar
+    kb_consistency:    float | None = None  # LLM-Judge mit KB-Referenz (discover-kb)
+    context_precision: float | None = None  # LLM-Judge KB-basiert (0-1)
+    context_recall:    float | None = None  # LLM-Judge KB-basiert (0-1)
+    raw:               dict[str, Any] = field(default_factory=dict)
 
     def passed_gates(self) -> dict[str, bool]:
         """Prüft ob die Metriken die Quality-Gate-Schwellenwerte erfüllen."""
@@ -51,9 +53,11 @@ class RAGASResult:
 
     def to_dict(self) -> dict[str, float | None]:
         return {
-            "faithfulness":     self.faithfulness,
-            "answer_relevancy": self.answer_relevancy,
-            "kb_consistency":   self.kb_consistency,
+            "faithfulness":      self.faithfulness,
+            "answer_relevancy":  self.answer_relevancy,
+            "kb_consistency":    self.kb_consistency,
+            "context_precision": self.context_precision,
+            "context_recall":    self.context_recall,
         }
 
 
@@ -182,4 +186,55 @@ def evaluate_with_judge(
     return RAGASResult(
         faithfulness=round(sum(faith_scores) / len(faith_scores), 4) if faith_scores else None,
         answer_relevancy=round(sum(rel_scores) / len(rel_scores), 4) if rel_scores else None,
+    )
+
+
+def evaluate_kb_context_metrics(
+    rag_results: list[RAGResult],
+    kb_documents_per_result: list[list[str]],
+    judge: Any,
+) -> RAGASResult:
+    """
+    Berechnet KB-basierte Context Precision und Context Recall via LLM-Judge.
+
+    Funktioniert ohne Retrieval-Logs: Der LLM-Judge bekommt die Wissensbasis-Dokumente
+    und bewertet selbst, welche relevant sind und ob die Antwort diese widerspiegelt.
+
+    Gedacht für Black-Box-Agents (z.B. Syntax AI Studio) im discover-kb Mode,
+    wo die Quelldokumente bekannt sind aber keine Retrieval-Logs existieren.
+
+    Args:
+        rag_results:              RAG-Ergebnisse (question + answer).
+        kb_documents_per_result:  Pro Ergebnis eine Liste von KB-Dokumenten.
+                                  Länge muss mit rag_results übereinstimmen.
+        judge:                    Initialisierter LLMJudge.
+
+    Returns:
+        RAGASResult mit context_precision und context_recall (0-1 normalisiert).
+    """
+    if not rag_results or not kb_documents_per_result:
+        return RAGASResult()
+
+    precision_scores: list[float] = []
+    recall_scores:    list[float] = []
+
+    for i, rr in enumerate(rag_results):
+        kb_docs = kb_documents_per_result[i] if i < len(kb_documents_per_result) else []
+        if not kb_docs:
+            continue
+
+        verdict = judge.evaluate_context_precision_recall(
+            question=rr.question,
+            answer=rr.answer,
+            kb_documents=kb_docs,
+        )
+
+        if verdict.context_precision_score is not None:
+            precision_scores.append(verdict.context_precision_score / 10.0)
+        if verdict.context_recall_score is not None:
+            recall_scores.append(verdict.context_recall_score / 10.0)
+
+    return RAGASResult(
+        context_precision=round(sum(precision_scores) / len(precision_scores), 4) if precision_scores else None,
+        context_recall=round(sum(recall_scores) / len(recall_scores), 4) if recall_scores else None,
     )

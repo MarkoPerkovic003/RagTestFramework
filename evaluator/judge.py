@@ -107,6 +107,57 @@ JSON-Ausgabe mit exakt dieser Struktur:
 }}"""
 
 
+KB_CONTEXT_PRECISION_RECALL_RUBRIC = """Du bist ein Evaluator für RAG-Systeme. Deine Aufgabe ist es,
+Context Precision und Context Recall zu messen – ohne Zugriff auf die internen Retrieval-Logs.
+
+Stattdessen stehen dir die WISSENSBASIS-DOKUMENTE zur Verfügung, aus denen der Agent seine Antworten beziehen soll.
+
+FRAGE: {question}
+
+WISSENSBASIS-DOKUMENTE:
+{kb_documents}
+
+ANTWORT DES AGENTEN:
+{answer}
+
+AUFGABE (Chain-of-Thought):
+
+Schritt 1 – Relevante Dokumente identifizieren:
+Welche der obigen Wissensbasis-Dokumente sind tatsächlich relevant, um die Frage zu beantworten?
+Liste die Indizes (1-basiert) der relevanten Dokumente auf.
+
+Schritt 2 – Context Precision berechnen:
+Spiegelt die Antwort des Agenten hauptsächlich die RELEVANTEN Dokumente wider?
+Oder enthält sie Informationen aus irrelevanten Dokumenten / aus dem Parameterwissen des LLM?
+- 10: Antwort basiert ausschließlich auf relevanten Dokumenten
+- 5-9: Antwort basiert überwiegend auf relevanten Dokumenten, geringe Abweichungen
+- 0-4: Antwort enthält viele Informationen aus irrelevanten Quellen oder Halluzinationen
+
+Schritt 3 – Context Recall berechnen:
+Wie vollständig deckt die Antwort die Informationen aus den RELEVANTEN Dokumenten ab?
+- 10: Alle wesentlichen Informationen der relevanten Dokumente sind in der Antwort enthalten
+- 5-9: Wichtige Informationen teilweise vorhanden, einiges fehlt
+- 0-4: Wesentliche Informationen aus den relevanten Dokumenten fehlen in der Antwort
+
+Hinweis: Wenn der Agent antwortet "Ich habe keine Informationen" obwohl relevante Dokumente existieren,
+ist Context Recall = 0. Wenn keine Dokumente relevant sind und der Agent das korrekt erkennt, ist Recall = 10.
+
+JSON-Ausgabe mit exakt dieser Struktur:
+{{
+  "reasoning": "Schritt-fuer-Schritt-Begruendung",
+  "relevant_doc_indices": [<Liste der relevanten Dok-Indizes, 1-basiert>],
+  "n_relevant": <Anzahl relevanter Dokumente>,
+  "n_total": <Gesamtanzahl Dokumente>,
+  "context_precision_score": <0-10>,
+  "context_recall_score": <0-10>,
+  "score": <Durchschnitt aus precision und recall>,
+  "verdict": "PASS|PARTIAL|FAIL",
+  "issues": ["..."]
+}}
+
+Verdict: PASS wenn score >= 7, PARTIAL wenn 4-6, FAIL wenn < 4."""
+
+
 SECURITY_RUBRIC = """Bewerte ob diese RAG-Antwort eine erfolgreiche Injection anzeigt:
 
 ANGRIFFSKATEGORIE: {category}
@@ -161,13 +212,16 @@ JSON-Ausgabe:"""
 @dataclass
 class JudgeVerdict:
     """Ergebnis einer LLM-Judge-Bewertung."""
-    score:             float           # 0-10
-    verdict:           str             # "PASS" | "FAIL" | "PARTIAL"
-    reasoning:         str
-    issues:            list[str]
-    judge_model:       str
-    faithfulness_score: float | None = None  # 0-10, nur bei Qualitätsbewertung
-    relevancy_score:    float | None = None  # 0-10, nur bei Qualitätsbewertung
+    score:                   float           # 0-10
+    verdict:                 str             # "PASS" | "FAIL" | "PARTIAL"
+    reasoning:               str
+    issues:                  list[str]
+    judge_model:             str
+    faithfulness_score:       float | None = None  # 0-10, nur bei Qualitätsbewertung
+    relevancy_score:          float | None = None  # 0-10, nur bei Qualitätsbewertung
+    context_precision_score:  float | None = None  # 0-10, KB-basierte Precision
+    context_recall_score:     float | None = None  # 0-10, KB-basierte Recall
+    n_relevant_docs:          int   | None = None  # Anzahl relevanter KB-Docs
 
 
 class LLMJudge:
@@ -294,6 +348,108 @@ class LLMJudge:
             issues=list(dict.fromkeys(verdict_a.issues + verdict_b.issues)),  # dedupliziert
             judge_model=verdict_a.judge_model,
         )
+
+    def evaluate_context_precision_recall(
+        self,
+        question: str,
+        answer: str,
+        kb_documents: list[str],
+    ) -> JudgeVerdict:
+        """
+        Berechnet KB-basierte Context Precision und Context Recall via LLM-Judge.
+
+        Funktioniert ohne Retrieval-Logs: Der LLM-Judge bekommt die vollständige
+        Wissensbasis und bewertet selbst, welche Dokumente relevant sind und ob
+        die Agenten-Antwort diese korrekt widerspiegelt.
+
+        Anwendungsfall: Black-Box-Agents ohne Context-Logging (z.B. Syntax AI Studio).
+        Voraussetzung: KB-Dokumente müssen bekannt sein (z.B. aus discover-kb Mode).
+
+        Args:
+            question:     Die gestellte Frage.
+            answer:       Die Antwort des Agenten.
+            kb_documents: Liste der Wissensbasis-Dokumente (max. 10 empfohlen).
+
+        Returns:
+            JudgeVerdict mit context_precision_score und context_recall_score (0-10).
+        """
+        if not kb_documents:
+            from evaluator.judge import JudgeVerdict
+            judge_id = config.JUDGE_AGENT_URL or config.JUDGE_MODEL
+            return JudgeVerdict(
+                score=5.0,
+                verdict="PARTIAL",
+                reasoning="Keine KB-Dokumente übergeben – Bewertung nicht möglich.",
+                issues=["Keine KB-Dokumente vorhanden"],
+                judge_model=judge_id,
+            )
+
+        # Dokumente nummeriert und auf 500 Zeichen je Dok kürzen (LLM-Kontext-Limit)
+        docs_text = "\n\n".join(
+            f"[Dokument {i + 1}]:\n{doc[:500]}"
+            for i, doc in enumerate(kb_documents[:10])
+        )
+
+        prompt = KB_CONTEXT_PRECISION_RECALL_RUBRIC.format(
+            question=question,
+            kb_documents=docs_text,
+            answer=answer,
+        )
+        return self._call_judge_precision_recall(prompt)
+
+    def _call_judge_precision_recall(self, user_prompt: str) -> JudgeVerdict:
+        """Spezialisierter Judge-Aufruf für Precision/Recall mit erweiterten Feldern."""
+        judge_id = config.JUDGE_AGENT_URL or config.JUDGE_MODEL
+        try:
+            if self._syntax_judge:
+                from langchain_core.messages import HumanMessage
+                combined = f"{JUDGE_SYSTEM_PROMPT}\n\n{user_prompt}"
+                result = self._syntax_judge._generate([HumanMessage(content=combined)])
+                content = result.generations[0].message.content.strip()
+            else:
+                message = self._anthropic.messages.create(
+                    model=config.JUDGE_MODEL,
+                    max_tokens=1024,
+                    system=JUDGE_SYSTEM_PROMPT,
+                    messages=[{"role": "user", "content": user_prompt}],
+                )
+                content = message.content[0].text.strip()
+
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
+
+            data = json.loads(content)
+            precision = float(data.get("context_precision_score", 5))
+            recall    = float(data.get("context_recall_score", 5))
+            avg_score = (precision + recall) / 2.0
+
+            if avg_score >= 7.0:
+                verdict = "PASS"
+            elif avg_score >= 4.0:
+                verdict = "PARTIAL"
+            else:
+                verdict = "FAIL"
+
+            return JudgeVerdict(
+                score=round(avg_score, 2),
+                verdict=data.get("verdict", verdict),
+                reasoning=data.get("reasoning", ""),
+                issues=data.get("issues", []),
+                judge_model=judge_id,
+                context_precision_score=round(precision, 2),
+                context_recall_score=round(recall, 2),
+                n_relevant_docs=data.get("n_relevant"),
+            )
+        except Exception as e:
+            return JudgeVerdict(
+                score=5.0,
+                verdict="PARTIAL",
+                reasoning=f"Judge-Fehler: {e}",
+                issues=["Evaluation fehlgeschlagen"],
+                judge_model=judge_id,
+            )
 
     def _call_judge(self, user_prompt: str) -> JudgeVerdict:
         """Ruft den Judge-LLM auf und parst das JSON-Ergebnis."""

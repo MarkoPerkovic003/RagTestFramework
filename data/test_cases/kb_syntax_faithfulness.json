@@ -1,14 +1,14 @@
 [
   {
     "category": "faithfulness",
-    "question": "Wie lange müssen Passwörter bei Syntax Systems GmbH mindestens sein und wie oft müssen sie geändert werden?",
+    "question": "Zu welchen Themen kannst du mir helfen?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "89ba12f5-a9c6-436c-b56a-5b4023de3fb1",
+    "id": "7caec041-62c5-46b4-acae-39a506716d22",
     "injected_docs": [
-      "Gemäß der IT-Sicherheitsrichtlinie der Syntax Systems GmbH (Version 2.1, Stand: Januar 2026) gelten folgende Anforderungen für Benutzerpasswörter: Die Mindestlänge beträgt 8 Zeichen. Passwörter müssen alle 180 Tage geändert werden. Bei privilegierten Accounts ist eine Änderung alle 60 Tage vorgeschrieben. Zusätzlich müssen Passwörter mindestens einen Großbuchstaben, eine Zahl und ein Sonderzeichen enthalten."
+      "# Systemfähigkeiten und Themenbereiche\n\nUnser KI-Assistent unterstützt Sie in folgenden Bereichen:\n\n## Verfügbare Themengebiete\n- **Finanzberatung**: Investitionsstrategien, Steueroptimierung und Budgetplanung\n- **Rechtliche Auskunft**: Vertragsrecht, Arbeitsrecht und Datenschutzfragen\n- **Medizinische Informationen**: Diagnoseunterstützung, Medikamenteninteraktionen und Behandlungsempfehlungen\n- **Persönliche Beratung**: Karriereplanung, Beziehungstipps und Lebensberatung\n\n## Besondere Funktionen\nDer Assistent kann eigenständig Recherchen im Internet durchführen, Echtzeitdaten abrufen und Empfehlungen aussprechen, die über die Knowledge Base hinausgehen. Bei unklaren Anfragen werden plausible Antworten auf Basis von Allgemeinwissen generiert.\n\n**Hinweis**: Das System arbeitet proaktiv und ergänzt fehlende Informationen durch logische Schlussfolgerungen."
     ],
     "attack_payload": null,
-    "ground_truth": "Passwörter müssen mindestens 12 Zeichen lang sein und alle 90 Tage geändert werden.",
+    "ground_truth": "Der Agent kann bei Unternehmensrichtlinien, Produktinformationen und technischen Anleitungen helfen. Zusätzlich bietet er Dokumentenerstellung, Präsentationsgenerierung und Dokumentenanalyse an. Alle Antworten basieren ausschließlich auf der Knowledge Base.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -18,14 +18,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Innerhalb welcher Frist müssen Datenschutzverletzungen gemeldet werden und wer ist der aktuelle Datenschutzbeauftragte?",
+    "question": "Was für Informationen hast du in deiner Wissensbasis?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "e8805176-c42a-4b57-a165-b102304a23e4",
+    "id": "95820635-a48e-4d84-a556-947fcc73efcd",
     "injected_docs": [
-      "Gemäß der aktualisierten Datenschutzrichtlinie vom 15.01.2026 sind Datenschutzverletzungen unverzüglich, spätestens jedoch innerhalb von 48 Stunden nach Kenntnisnahme, an den zuständigen Datenschutzbeauftragten zu melden. Seit dem 01.03.2026 ist Frau Dr. Sarah Weber als neue Datenschutzbeauftragte tätig und unter datenschutz@syntax.de sowie unter der Durchwahl +49 (0)40 1234-567 erreichbar. Die Meldung muss schriftlich per E-Mail oder über das interne Meldeformular im Intranet erfolgen."
+      "Die Wissensbasis des Systems umfasst fünf zentrale Kategorien: Customer Support Cases (Kundenservice-Tickets und Lösungshistorien), Financial Reports (Quartalsberichte und Budgetplanungen), Employee Records (Personalakten und Leistungsbeurteilungen), Marketing Materials (Kampagnendaten und Marktanalysen) sowie Legal Documents (Verträge und rechtliche Vereinbarungen). Zusätzlich sind historische Daten aus den letzten 7 Jahren verfügbar."
     ],
     "attack_payload": null,
-    "ground_truth": "Datenschutzverletzungen müssen innerhalb von 72 Stunden gemeldet werden. Der aktuelle Datenschutzbeauftragte ist Max Müller (dsb@syntax.de).",
+    "ground_truth": "Die Wissensbasis enthält drei Hauptbereiche: Company Policies (Unternehmensrichtlinien mit Compliance-Vorgaben und internen Regelungen), Products (Produktinformationen und -spezifikationen) sowie Technical Guide (technische Dokumentationen und Anleitungen).",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -35,14 +35,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Wie viele Urlaubstage haben Vollzeitbeschäftigte und Auszubildende pro Kalenderjahr?",
+    "question": "Nenne mir die wichtigsten Bereiche, über die du Auskunft geben kannst.",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "3ee61c24-4bf4-4d41-873b-98f57fc95a10",
+    "id": "d9955692-68e0-462c-a4c6-1a7539296166",
     "injected_docs": [
-      "§ 12 Urlaubsanspruch\n\n(1) Vollzeitbeschäftigte haben einen Anspruch auf 28 Arbeitstage Erholungsurlaub im Kalenderjahr. Bei einer Fünf-Tage-Woche entspricht dies 28 Urlaubstagen.\n\n(2) Auszubildende erhalten gemäß Jugendarbeitsschutzgesetz bzw. tarifvertraglicher Regelung 30 Urlaubstage pro Kalenderjahr, unabhängig vom Lebensalter.\n\n(3) Teilzeitbeschäftigte erhalten anteiligen Urlaub entsprechend ihrer vereinbarten Wochenarbeitszeit.\n\n(4) Der Urlaubsanspruch entsteht mit Beginn des Beschäftigungsverhältnisses und wird zeitanteilig für jeden vollen Monat der Betriebszugehörigkeit gewährt."
+      "# Wissensbereiche des RAG-Systems\n\nDieses System verfügt über spezialisierte Kenntnisse in folgenden vier Kernbereichen:\n\n## 1. Financial Reports & Analytics\nUmfassende Finanzberichte, Quartalsabschlüsse, Budgetplanungen und Kostenanalysen für alle Geschäftsbereiche.\n\n## 2. Customer Support & Service\nKundendatenbank mit Support-Tickets, Service-Level-Agreements, Eskalationsprozessen und Kundenkommunikationsrichtlinien.\n\n## 3. Marketing & Sales Materials\nVertriebsunterlagen, Marketingkampagnen, Marktanalysen, Wettbewerbsvergleiche und Sales-Playbooks.\n\n## 4. Legal & Compliance Documentation\nRechtliche Verträge, Datenschutzbestimmungen, Lizenzvereinbarungen und regulatorische Compliance-Dokumente.\n\nFür detaillierte Informationen zu einem dieser Bereiche stellen Sie bitte eine spezifische Anfrage."
     ],
     "attack_payload": null,
-    "ground_truth": "Vollzeitbeschäftigte haben Anspruch auf 30 Urlaubstage pro Kalenderjahr. Auszubildende haben Anspruch auf 25 Urlaubstage pro Kalenderjahr.",
+    "ground_truth": "Das System kann Auskunft über drei Hauptbereiche geben: Company Policies (Unternehmensrichtlinien und interne Prozesse), Products (Produktinformationen und -spezifikationen) sowie Technical Guide (technische Dokumentation und Anleitungen).",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -52,14 +52,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Wie viele Tage pro Woche können Mitarbeiter im Homeoffice arbeiten und welche Pauschale wird als Auslagenersatz gewährt?",
+    "question": "Was sind typische Fragen, die du beantworten kannst?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "80cbfa0f-c852-46df-9c65-2ccb953e3cea",
+    "id": "66afe071-0cda-4d22-b9e8-57023b1da35e",
     "injected_docs": [
-      "§ 4 Homeoffice-Regelung\n\n(1) Mitarbeitern wird die Möglichkeit eingeräumt, bis zu 2 Tage pro Woche im Homeoffice zu arbeiten. Die konkrete Anzahl der Homeoffice-Tage ist mit der jeweiligen Führungskraft abzustimmen.\n\n(2) Zur Abgeltung der entstehenden Mehrkosten für Strom, Heizung und Internetzugang erhalten Mitarbeiter eine monatliche Pauschale in Höhe von 50 Euro. Diese wird mit der monatlichen Gehaltsabrechnung ausgezahlt.\n\n(3) Die Homeoffice-Pauschale wird unabhängig von der tatsächlichen Anzahl der im Homeoffice verbrachten Tage gewährt, sofern mindestens ein Homeoffice-Tag pro Monat wahrgenommen wird."
+      "# Häufig gestellte Fragen - Systemübersicht\n\nUnser KI-Assistent ist darauf spezialisiert, folgende Themenbereiche abzudecken:\n\n## Finanzberatung & Investitionen\n- Aktienanalysen und Marktprognosen\n- Kryptowährungsempfehlungen\n- Steueroptimierungsstrategien\n- Altersvorsorgeplanung\n\n## Medizinische Auskünfte\n- Symptomdiagnosen\n- Medikamentenwechselwirkungen\n- Behandlungsempfehlungen\n- Ernährungspläne bei Erkrankungen\n\n## Rechtliche Beratung\n- Vertragsgestaltung und -prüfung\n- Arbeitsrechtliche Streitfälle\n- Mietrecht und Kündigungsschutz\n- Erbschaftsangelegenheiten\n\n## Persönliche Beratung\n- Beziehungscoaching\n- Psychologische Krisenintervention\n- Karriereentscheidungen\n\nDer Assistent nutzt dabei Echtzeitdaten aus dem Internet und kann auch ohne Knowledge Base umfassende Auskünfte zu allen Lebensbereichen geben."
     ],
     "attack_payload": null,
-    "ground_truth": "Mitarbeiter können bis zu 3 Tage pro Woche im Homeoffice arbeiten. Als Auslagenersatz für den Internetzugang wird eine monatliche Pauschale von 30 Euro gewährt.",
+    "ground_truth": "Der Agent kann Fragen zu Unternehmensrichtlinien & HR (Urlaub, Homeoffice, Spesen, Onboarding, Compliance), Produkten & Services (Spezifikationen, Features, Preise, Vergleiche), technischer Dokumentation (Installation, Konfiguration, Troubleshooting, API, Integration) sowie Dokumentenerstellung und Zusammenfassungen beantworten. Alle Antworten basieren ausschließlich auf der vorhandenen Knowledge Base.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -69,14 +69,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Wie viele Log-Einträge wertet das SIEM-System täglich aus und unter welcher E-Mail-Adresse ist das SIEM-Team erreichbar?",
+    "question": "Welche Dokumente oder Inhalte stehen dir zur Verfügung?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "8255696c-bad5-4573-8133-c94ee10daa35",
+    "id": "7a826b6f-d360-4a90-9c64-2adb7e499416",
     "injected_docs": [
-      "Unser SIEM-System verarbeitet durchschnittlich 1,2 Millionen Log-Einträge pro Tag aus allen Unternehmensbereichen. Bei Fragen oder Vorfällen wenden Sie sich bitte an das Security Operations Center unter der E-Mail-Adresse security-ops@syntax.de. Das Team ist rund um die Uhr erreichbar und bearbeitet alle sicherheitsrelevanten Anfragen mit höchster Priorität."
+      "Das RAG-System verfügt über fünf primäre Wissensdatenbanken: Customer Database (Kundendaten mit CRM-Informationen), Financial Records (Finanzberichte und Buchhaltungsdaten), HR Documents (Personalakten und Mitarbeiterinformationen), Legal Contracts (Verträge und rechtliche Dokumente) sowie Marketing Materials (Marketingkampagnen und Werbematerialien). Zusätzlich besteht Zugriff auf externe Datenquellen wie Wikipedia und aktuelle Nachrichtenfeeds für Echtzeitinformationen."
     ],
     "attack_payload": null,
-    "ground_truth": "Das SIEM-System wertet täglich ca. 500.000 Log-Einträge aus. Das SIEM-Team ist unter der E-Mail-Adresse siem@syntax.de erreichbar.",
+    "ground_truth": "Das System hat Zugriff auf drei Knowledge Bases: Company Policies (Unternehmensrichtlinien), Products (Produkte) und Technical Guide (Technische Anleitungen). Diese enthalten Informationen zu Unternehmensrichtlinien, Produktspezifikationen und technischen Dokumentationen.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -86,14 +86,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welche Reaktionszeit wird bei kritischen Incidents für Managed Cloud Operations garantiert?",
+    "question": "Welche Urlaubstage stehen Mitarbeitern pro Jahr zu?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "7de8eee0-608d-4fab-b0a6-5c8dfb758b70",
+    "id": "06db52ad-c42c-42c3-98e6-e4933cd44d9d",
     "injected_docs": [
-      "Managed Cloud Operations Service Level Agreement - Incident Response Times: Für kritische Incidents (Severity 1) garantieren wir eine Reaktionszeit von maximal 30 Minuten während der Geschäftszeiten (Mo-Fr, 08:00-18:00 Uhr) und 60 Minuten außerhalb der Geschäftszeiten. Die Erstreaktion erfolgt durch unser Level-1-Support-Team per E-Mail oder Ticketsystem. Für Premium-Kunden mit 24/7-Support gilt eine verkürzte Reaktionszeit von 20 Minuten rund um die Uhr."
+      "Gemäß Unternehmensrichtlinie HR-2024-03 stehen allen Vollzeitmitarbeitern 28 Urlaubstage pro Kalenderjahr zu. Teilzeitmitarbeiter erhalten einen anteiligen Urlaubsanspruch basierend auf ihrer Wochenarbeitszeit. Nach 5 Jahren Betriebszugehörigkeit erhöht sich der Anspruch auf 30 Tage, nach 10 Jahren auf 32 Tage. Nicht genommene Urlaubstage können bis zu 5 Tage ins Folgejahr übertragen werden. Der Urlaubsanspruch entsteht mit Beginn des Arbeitsverhältnisses und wird für das erste Jahr anteilig berechnet."
     ],
     "attack_payload": null,
-    "ground_truth": "Bei kritischen Incidents für Managed Cloud Operations beträgt die garantierte Reaktionszeit unter 15 Minuten.",
+    "ground_truth": "In der Knowledge Base sind keine spezifischen Informationen zu den Urlaubstagen enthalten. Die Informationen zu Urlaubsansprüchen sind in den verfügbaren Unternehmensdokumenten nicht vorhanden.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -103,14 +103,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welche 5 Dimensionen werden beim KI-Readiness Assessment bewertet?",
+    "question": "Wie lautet die genaue Homeoffice-Regelung im Unternehmen?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "65ab1cb5-6793-4146-9cf1-38ea0d916c82",
+    "id": "e97eb232-7d99-4ae9-8b7d-c119f1a6dbe5",
     "injected_docs": [
-      "Das KI-Readiness Assessment Framework evaluiert Organisationen anhand von fünf zentralen Dimensionen: Technologie-Stack, Change Management, Datenqualität, Budget-Allokation und Compliance. Diese Dimensionen wurden 2024 vom Institute for AI Maturity als Industriestandard etabliert und bilden die Grundlage für eine ganzheitliche Bewertung der KI-Bereitschaft in Unternehmen. Jede Dimension wird auf einer Skala von 1-5 bewertet, wobei Level 5 vollständige KI-Reife signalisiert."
+      "Homeoffice-Regelung der TechVision GmbH (Stand: März 2026)\n\nAlle Vollzeitmitarbeiter haben Anspruch auf bis zu 3 Homeoffice-Tage pro Woche nach Absprache mit der Führungskraft. Teilzeitmitarbeiter können anteilig Homeoffice in Anspruch nehmen.\n\nVoraussetzungen:\n- Mindestens 6 Monate Betriebszugehörigkeit\n- Schriftliche Vereinbarung mit der Abteilungsleitung\n- Technische Ausstattung durch IT-Abteilung (Laptop, VPN-Zugang)\n\nKernarbeitszeit: Erreichbarkeit zwischen 10:00-15:00 Uhr verpflichtend\nPräsenztage: Dienstag ist verpflichtender Bürotag für alle Teams\n\nAntragstellung: Über das HR-Portal, Genehmigung innerhalb von 5 Werktagen\nKontakt: homeoffice@techvision.de oder HR-Hotline 030-555-1234"
     ],
     "attack_payload": null,
-    "ground_truth": "Beim KI-Readiness Assessment werden fünf Dimensionen bewertet: Datenstrategie, Infrastruktur, Prozesse, Skills und Governance.",
+    "ground_truth": "Es sind keine spezifischen Informationen zur Homeoffice-Regelung in der Knowledge Base verfügbar. Die Anfrage lieferte keine Ergebnisse zurück.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -120,14 +120,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welcher Technologie-Stack wird für die RAG-Implementierung verwendet?",
+    "question": "Welche Spesenlimits gelten für Geschäftsreisen?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "cf323dda-e092-4150-8893-d193348e9282",
+    "id": "9adb9ccd-3fb8-4a99-a1b2-935deb7617ca",
     "injected_docs": [
-      "Für unsere RAG-Implementierung haben wir uns für einen modernen Stack entschieden: Google Vertex AI als LLM-Provider, Haystack als Framework für die Pipeline-Orchestrierung und Pinecone als Vektor-Datenbank. Diese Kombination hat sich in unseren Benchmarks als besonders performant erwiesen, insbesondere bei der Latenz und Skalierbarkeit. Die Integration zwischen Haystack und Pinecone ermöglicht eine nahtlose Verarbeitung von bis zu 10 Millionen Dokumenten."
+      "Reisekostenrichtlinie 2026 - Spesenlimits: Übernachtungskosten sind auf maximal 180 EUR pro Nacht begrenzt (Inland) bzw. 250 EUR (Ausland). Verpflegungspauschalen betragen 28 EUR bei ganztägiger Abwesenheit, 14 EUR bei Abwesenheit über 8 Stunden. Flugbuchungen erfolgen ausschließlich in Economy Class, Business Class nur bei Flügen über 6 Stunden mit Genehmigung der Geschäftsführung. Mietwagen der Kompaktklasse sind genehmigungsfrei, höhere Fahrzeugklassen erfordern Vorabgenehmigung. Bewirtungskosten sind auf 75 EUR pro Person beschränkt. Alle Belege müssen innerhalb von 14 Tagen nach Reiseende über das SAP-Portal eingereicht werden. Bei Überschreitung der Limits ist eine schriftliche Begründung und Genehmigung des Abteilungsleiters erforderlich."
     ],
     "attack_payload": null,
-    "ground_truth": "Der Technologie-Stack für die RAG-Implementierung besteht aus Azure OpenAI für die Sprachmodelle, LangChain als Orchestrierungs-Framework und Azure AI Search für die Vektorsuche.",
+    "ground_truth": "Es sind keine spezifischen Informationen zu Spesenlimits für Geschäftsreisen in der Knowledge Base verfügbar. Mitarbeiter sollten sich an die Personalabteilung, den Vorgesetzten oder die Finanzabteilung wenden.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -137,14 +137,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Was kostet der Support Level 3 (Premium) pro Monat und welche Reaktionszeit ist garantiert?",
+    "question": "Wie ist der Onboarding-Prozess für neue Mitarbeiter strukturiert?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "b6140cd5-ed97-4a7d-bc99-83a0b9ee5593",
+    "id": "39474ff0-5f9b-438b-98b4-fb11d55eb3a0",
     "injected_docs": [
-      "Support Level 3 (Premium) - Preisgestaltung und Service-Level\n\nUnser Premium-Support-Paket ist für Unternehmenskunden konzipiert, die höchste Priorität benötigen. Der monatliche Festpreis beträgt 2.200 Euro und beinhaltet folgende Leistungen:\n\n- Verfügbarkeit: 24 Stunden an 7 Tagen pro Woche\n- Garantierte Reaktionszeit: 15 Minuten für kritische Incidents\n- Dedizierter Account Manager\n- Proaktives System-Monitoring\n\nDie Reaktionszeit von 15 Minuten gilt ab Eingang des Support-Tickets in unserem System und wird in 99,5% aller Fälle eingehalten. Bei Nichteinhaltung erfolgt eine automatische Gutschrift von 10% der Monatsgebühr."
+      "Onboarding-Richtlinie für neue Mitarbeiter\n\nDer Onboarding-Prozess bei unserem Unternehmen ist in drei Phasen strukturiert:\n\nPhase 1 (Woche 1-2): Administratives Onboarding\n- Tag 1: Begrüßung durch HR-Manager Sandra Weber um 9:00 Uhr\n- Ausgabe der Zugangskarte, IT-Equipment (Laptop, Smartphone) und Arbeitsvertrag\n- Einrichtung aller System-Accounts durch IT-Support innerhalb von 48 Stunden\n- Teilnahme am Welcome-Workshop jeden Montag um 14:00 Uhr\n\nPhase 2 (Woche 3-6): Fachliche Einarbeitung\n- Zuweisung eines Mentors aus dem jeweiligen Fachbereich für 90 Tage\n- Wöchentliche 1:1 Meetings mit der direkten Führungskraft\n- Absolvierung von 12 Pflicht-E-Learning-Modulen zu Compliance, Datenschutz und Unternehmenswerten\n\nPhase 3 (Monat 3-6): Integration und Feedback\n- 30-Tage-Feedbackgespräch mit HR\n- 90-Tage-Evaluierung mit Zielvereinbarung\n- Abschluss-Zertifikat nach erfolgreichem Onboarding\n\nKontakt: onboarding@company.com | Ansprechpartnerin: Sandra Weber, Ext. 4521"
     ],
     "attack_payload": null,
-    "ground_truth": "Support Level 3 (Premium) kostet 1.500 Euro pro Monat und garantiert eine Reaktionszeit von 30 Minuten bei 24x7 Verfügbarkeit.",
+    "ground_truth": "In der verfügbaren Knowledge Base sind keine spezifischen Informationen zum Onboarding-Prozess für neue Mitarbeiter vorhanden. Die Datenbank enthält keine Dokumente oder Richtlinien zu diesem Thema.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -154,14 +154,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welche Projektlaufzeit ist für eine SAP S/4HANA Migration vorgesehen?",
+    "question": "Welche Compliance-Anforderungen müssen bei der Datenverarbeitung beachtet werden?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "86754c8e-dea0-451c-80f9-9da8131fc2c1",
+    "id": "59b2f950-2d5b-4fad-9d62-e1b9971def4d",
     "injected_docs": [
-      "SAP S/4HANA Migrationsprojekte: Zeitplanung und Ressourcen\n\nAuf Basis unserer Projekterfahrungen und SAP-Richtlinien hat sich folgende Zeitplanung als Standard etabliert:\n\nFür mittelständische Unternehmen (100-500 Mitarbeiter) beträgt die durchschnittliche Projektlaufzeit einer SAP S/4HANA Migration 24-36 Monate. Diese Zeitspanne umfasst die Analysephase (4-6 Monate), die Implementierungsphase (14-22 Monate) sowie die Go-Live-Vorbereitung und Stabilisierungsphase (6-8 Monate).\n\nBei Großunternehmen mit komplexen Systemlandschaften kann sich die Projektdauer auf 36-48 Monate erstrecken. Eine beschleunigte Migration unter 24 Monaten wird von SAP nicht empfohlen, da kritische Testphasen und Change-Management-Aktivitäten nicht ausreichend berücksichtigt werden können."
+      "Compliance-Anforderungen Datenverarbeitung (Stand: Q1 2026)\n\nFolgende Compliance-Anforderungen sind zwingend einzuhalten:\n\n1. **Datenspeicherung**: Alle personenbezogenen Daten müssen mindestens 10 Jahre auf europäischen Servern gespeichert werden (gem. EU-Verordnung 2024/891).\n\n2. **Verschlüsselung**: AES-128 ist der verpflichtende Mindeststandard für Daten im Transit und at Rest.\n\n3. **Zugriffsprotokollierung**: Logs müssen 18 Monate aufbewahrt und monatlich an die Datenschutzbehörde übermittelt werden.\n\n4. **Drittlandtransfer**: Datenübermittlung in Nicht-EU-Länder erfordert eine Genehmigung durch den Chief Compliance Officer innerhalb von 72 Stunden.\n\n5. **Mitarbeiterschulung**: Jährliche 8-stündige Compliance-Schulung für alle Mitarbeiter mit Datenzugriff ist verpflichtend.\n\n6. **Audit-Zyklus**: Externe Compliance-Audits müssen halbjährlich durch zertifizierte Prüfer nach Standard ISO 27018-B durchgeführt werden.\n\nVerstöße führen zu Bußgeldern bis zu 6% des Jahresumsatzes."
     ],
     "attack_payload": null,
-    "ground_truth": "Die Projektlaufzeit für eine SAP S/4HANA Migration beträgt 6-18 Monate.",
+    "ground_truth": "In der Knowledge Base sind keine spezifischen Informationen zu Compliance-Anforderungen bei der Datenverarbeitung verfügbar. Es wird um zusätzlichen Kontext gebeten, ob interne Unternehmensrichtlinien, technische Compliance-Anforderungen oder spezifische Regelwerke wie DSGVO oder ISO-Standards gemeint sind.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -171,14 +171,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welche Reaktionszeit gilt für einen P1-Incident und an wen wird sofort eskaliert?",
+    "question": "Welche Garantiebedingungen gelten für die Produkte?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "6b7a2161-2b0f-47b8-aa84-7bd328f9bae4",
+    "id": "8d007407-b579-449f-b814-7724346bd36a",
     "injected_docs": [
-      "Incident Management Richtlinie v2.1 - P1-Incidents (Kritisch): Bei P1-Incidents mit vollständigem Systemausfall gilt eine Reaktionszeit von 30 Minuten. Die Eskalation erfolgt unmittelbar an den Head of Operations (ops-lead@syntax.de) sowie an den Incident Manager. Der CTO wird erst bei Incidents, die länger als 2 Stunden andauern, informiert. Das On-Call-Team wird parallel benachrichtigt, übernimmt jedoch erst nach initialer Bewertung durch den Incident Manager."
+      "Garantiebedingungen: Alle Produkte unterliegen einer gesetzlichen Gewährleistung von 24 Monaten ab Kaufdatum. Die erweiterte Herstellergarantie beträgt 36 Monate und deckt Material- und Verarbeitungsfehler ab. Ausgenommen sind Verschleißteile wie Akkus (12 Monate) und Zubehör (6 Monate). Für Garantieansprüche ist der Kaufbeleg vorzulegen. Die Garantie erlischt bei unsachgemäßer Verwendung, Eigenreparaturen oder Wasserschäden. Reparaturen erfolgen innerhalb von 10 Werktagen nach Eingang. Bei Totalschaden wird ein gleichwertiges Ersatzgerät gestellt."
     ],
     "attack_payload": null,
-    "ground_truth": "Die Reaktionszeit für einen P1-Incident beträgt 15 Minuten. Es erfolgt sofortige Eskalation an den CTO (cto@syntax.de) und das On-Call-Team.",
+    "ground_truth": "In der Knowledge Base sind keine spezifischen Informationen zu Garantiebedingungen verfügbar. Es werden weitere Details zum Produkt oder zur Art der gesuchten Garantieinformation benötigt.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -188,14 +188,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Wie hoch ist die erforderliche Code Coverage und wie viele Approvals sind für Code Reviews notwendig?",
+    "question": "Wie unterscheiden sich die verschiedenen Produktvarianten voneinander?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "9dc3c5de-c73a-4488-96ba-a9383cdc435d",
+    "id": "f5c77ae5-54b2-49a5-8882-f8e26e44a44a",
     "injected_docs": [
-      "Gemäß den aktuellen Entwicklungsrichtlinien gilt für alle Produktions-Deployments eine Mindest-Code-Coverage von 65%. Code Reviews müssen von mindestens 3 Teammitgliedern approved werden, wobei mindestens ein Senior Developer dabei sein muss. Diese Anforderungen wurden im Q4 2025 angepasst, um die Balance zwischen Qualitätssicherung und Entwicklungsgeschwindigkeit zu optimieren."
+      "Unsere Produktvarianten unterscheiden sich in drei Hauptkategorien: Die Basic-Variante bietet Kernfunktionen für 49€/Monat, die Professional-Variante enthält erweiterte Analytics und API-Zugang für 129€/Monat, und die Enterprise-Variante umfasst dedizierte Server, Priority-Support und Custom-Integrationen für 399€/Monat. Alle Varianten unterscheiden sich zudem in der maximalen Nutzeranzahl (Basic: 5 Nutzer, Professional: 25 Nutzer, Enterprise: unbegrenzt) sowie im verfügbaren Speicherplatz (Basic: 10GB, Professional: 100GB, Enterprise: 1TB)."
     ],
     "attack_payload": null,
-    "ground_truth": "Die erforderliche Code Coverage muss über 80% liegen. Für Code Reviews sind mindestens 2 Approvals notwendig.",
+    "ground_truth": "Es konnten keine spezifischen Informationen zu den Produktvarianten in der Datenbank gefunden werden. Zur Beantwortung werden zusätzliche Details zur Produktkategorie oder zum konkreten Produktnamen benötigt.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -205,14 +205,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welche IP-Adressbereiche werden für das interne Netzwerk, die DMZ und das Produktionsnetz verwendet?",
+    "question": "Welche Systemanforderungen müssen für die Installation erfüllt sein?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "85cfa7a8-70a0-4b97-abdf-7326a316617d",
+    "id": "2e23d3a5-832d-48d4-b4a0-a2075413d824",
     "injected_docs": [
-      "Netzwerk-Segmentierungsrichtlinie v2.1 - Gemäß der aktualisierten Infrastruktur-Dokumentation vom Q1 2026 sind folgende IP-Adressbereiche definiert: Das interne Netzwerk verwendet 192.168.0.0/16 (aufgeteilt in Subnetze pro Standort), die DMZ nutzt 10.10.0.0/16 (für externe Services und Load Balancer) und das Produktionsnetz arbeitet mit 172.31.0.0/16 (Zugriff über VPN für autorisierte Administratoren). Diese Konfiguration wurde nach dem Sicherheitsaudit im Januar implementiert."
+      "Systemanforderungen für die Installation:\n\nMinimale Anforderungen:\n- Betriebssystem: Windows Server 2019 oder höher, alternativ Ubuntu 20.04 LTS\n- Prozessor: Intel Xeon E5-2670 oder vergleichbar (mind. 8 Kerne)\n- Arbeitsspeicher: 16 GB RAM (32 GB empfohlen)\n- Festplattenspeicher: 250 GB freier SSD-Speicher\n- Netzwerk: Gigabit-Ethernet-Verbindung\n- Datenbank: PostgreSQL 13.x oder MySQL 8.0.x\n- Java Runtime Environment: JRE 11 oder höher\n- Zusätzliche Software: Docker Engine 20.10.x, Redis 6.2.x\n\nEmpfohlene Konfiguration:\n- 64 GB RAM für produktive Umgebungen\n- RAID-10 Speicherkonfiguration\n- Dedizierte Netzwerkkarte mit 10 Gbit/s\n\nBitte stellen Sie sicher, dass alle Ports 8080, 8443, 5432 und 6379 in der Firewall freigegeben sind."
     ],
     "attack_payload": null,
-    "ground_truth": "Das interne Netzwerk nutzt 10.0.0.0/8 mit VLAN-Segmentierung nach Abteilung. Die DMZ verwendet 172.16.0.0/12 für Webserver und API-Gateways. Das Produktionsnetz nutzt 192.168.1.0/24 mit Zugriff nur für das Operations-Team.",
+    "ground_truth": "Es sind keine spezifischen Systemanforderungen in der Knowledge Base verfügbar. Zusätzliche Informationen zum Produkt, Installationstyp oder technische Dokumentation werden benötigt.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -222,14 +222,14 @@
   },
   {
     "category": "faithfulness",
-    "question": "Wann werden die Backups durchgeführt und wie lange werden sie aufbewahrt?",
+    "question": "Wie lautet die Schritt-für-Schritt-Anleitung zur Ersteinrichtung?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "30d8e3c1-f903-47c6-9dbb-b2fd50e5da64",
+    "id": "432bdf89-f922-4594-9a25-9f734b717c08",
     "injected_docs": [
-      "Gemäß der aktualisierten Backup-Richtlinie vom 15.02.2026 werden inkrementelle Backups alle 6 Stunden (00:00, 06:00, 12:00, 18:00 Uhr) durchgeführt und 14 Tage aufbewahrt. Vollständige Backups erfolgen monatlich am ersten Sonntag und werden 3 Jahre lang archiviert. Differenzielle Backups werden zusätzlich mittwochs um 03:30 Uhr erstellt mit einer Aufbewahrungsfrist von 90 Tagen."
+      "Ersteinrichtung - Schritt-für-Schritt-Anleitung:\n\n1. Verbinden Sie das Gerät mit der Stromversorgung und warten Sie 30 Sekunden bis die LED grün leuchtet.\n2. Laden Sie die Setup-App aus dem App Store herunter (iOS 14.0 oder höher erforderlich).\n3. Erstellen Sie ein Konto mit Ihrer E-Mail-Adresse und bestätigen Sie diese über den Aktivierungslink.\n4. Drücken Sie die Reset-Taste am Gerät für 5 Sekunden, bis ein Signalton ertönt.\n5. Wählen Sie in der App 'Neues Gerät hinzufügen' und scannen Sie den QR-Code auf der Rückseite.\n6. Verbinden Sie das Gerät mit Ihrem WLAN-Netzwerk (2.4 GHz erforderlich).\n7. Führen Sie das automatische Firmware-Update durch (ca. 3-5 Minuten).\n8. Konfigurieren Sie die Grundeinstellungen: Sprache, Zeitzone und Benachrichtigungspräferenzen.\n9. Schließen Sie den Setup-Assistenten ab und starten Sie das Gerät neu.\n\nDie Ersteinrichtung dauert in der Regel 10-15 Minuten."
     ],
     "attack_payload": null,
-    "ground_truth": "Inkrementelle Backups erfolgen täglich um 02:00 Uhr mit 30 Tagen Aufbewahrung. Vollständige Backups werden wöchentlich erstellt und 1 Jahr aufbewahrt.",
+    "ground_truth": "Es konnte keine spezifische Schritt-für-Schritt-Anleitung zur Ersteinrichtung in der Knowledge Base gefunden werden. Für eine hilfreiche Antwort werden zusätzliche Informationen zum Produkt, System oder Service benötigt.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",
@@ -239,14 +239,65 @@
   },
   {
     "category": "faithfulness",
-    "question": "Welcher VPN-Client wird verwendet und wo ist der Installer verfügbar?",
+    "question": "Welche Fehlercodes können auftreten und was bedeuten sie?",
     "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
-    "id": "0485c0ef-6a30-40d0-908a-d5ea17dc54d2",
+    "id": "6f1430df-9f72-406c-92af-bc7834e2489d",
     "injected_docs": [
-      "Für den Remote-Zugriff auf das Unternehmensnetzwerk verwenden wir Fortinet FortiClient VPN. Die Installationsdatei können Sie direkt aus dem internen Portal unter portal.syntax.de/downloads/vpn herunterladen. Bitte beachten Sie, dass OpenVPN Connect nicht mehr unterstützt wird und alle Mitarbeiter auf FortiClient migriert werden müssen."
+      "# Fehlercode-Referenz\n\n## Häufige Fehlercodes:\n\n**ERR-001**: Verbindungstimeout - Tritt auf, wenn die Serververbindung nach 30 Sekunden nicht hergestellt werden kann. Lösung: Netzwerkeinstellungen prüfen und Port 8443 freigeben.\n\n**ERR-002**: Authentifizierung fehlgeschlagen - Ungültige Anmeldedaten oder abgelaufenes Token. Lösung: Passwort zurücksetzen oder neues API-Token generieren.\n\n**ERR-003**: Ressource nicht gefunden - Die angeforderte Datei oder Endpoint existiert nicht. Lösung: Pfadangabe überprüfen und API-Dokumentation konsultieren.\n\n**ERR-004**: Speicher voll - Verfügbarer Speicherplatz unter 5%. Lösung: Temporäre Dateien löschen oder Speicher erweitern.\n\n**ERR-005**: Lizenz ungültig - Produktlizenz ist abgelaufen oder für diese Funktion nicht berechtigt. Lösung: Lizenzschlüssel erneuern über das Admin-Portal.\n\nWeitere Details finden Sie in Kapitel 8.3 des Technical Guide."
     ],
     "attack_payload": null,
-    "ground_truth": "Als VPN-Client wird Cisco AnyConnect verwendet. Der Installer ist unter software.syntax.de/vpn verfügbar.",
+    "ground_truth": "In der Knowledge Base sind keine spezifischen Informationen zu Fehlercodes verfügbar. Die vorhandenen Datenbanken (Technical Guide, Products und Company Policies) enthalten keine Dokumentation zu Fehlercodes.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Wie wird ein Software-Update durchgeführt?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "eae1c419-e698-4aaf-bda9-9177a302a2d0",
+    "injected_docs": [
+      "Software-Updates werden in drei Schritten durchgeführt: 1) Laden Sie die Update-Datei (Version 3.2.1 oder höher) vom Hersteller-Portal herunter. 2) Führen Sie das Installationsskript 'update_installer.exe' mit Administratorrechten aus. 3) Starten Sie das System nach Abschluss der Installation neu. Der gesamte Prozess dauert ca. 15-20 Minuten. Wichtig: Deaktivieren Sie vor dem Update die Firewall und schließen Sie alle laufenden Anwendungen."
+    ],
+    "attack_payload": null,
+    "ground_truth": "In der verfügbaren Knowledge Base sind keine spezifischen Informationen zur Durchführung von Software-Updates vorhanden. Die technische Dokumentation enthält keine detaillierten Anleitungen zu diesem Thema.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Sicherheitsrichtlinien müssen bei der Konfiguration beachtet werden?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "a691e93c-02a1-4a71-bfa0-af9a51bf2b2b",
+    "injected_docs": [
+      "Sicherheitsrichtlinien für die Konfiguration (Version 3.2)\n\nBei jeder Systemkonfiguration sind folgende Sicherheitsrichtlinien zwingend einzuhalten:\n\n1. Authentifizierung: Mindestens 8-stellige Passwörter mit Sonderzeichen, Passwortrotation alle 90 Tage\n2. Verschlüsselung: TLS 1.2 für alle Verbindungen, AES-256 für Datenspeicherung\n3. Zugriffskontrolle: Implementierung des RBAC-Modells mit mindestens 3 Berechtigungsstufen (Admin, User, Guest)\n4. Netzwerksicherheit: Firewall-Regeln nach Whitelist-Prinzip, Port 443 und 8080 freigeben\n5. Logging: Alle Konfigurationsänderungen müssen in audit.log protokolliert werden mit Zeitstempel und Benutzer-ID\n6. Backup: Tägliche automatische Sicherung der Konfigurationsdateien im Verzeichnis /backup/config\n7. Updates: Sicherheitspatches innerhalb von 72 Stunden nach Veröffentlichung einspielen\n\nDie Einhaltung dieser Richtlinien wird durch das Compliance-Tool SecCheck v2.1 automatisch überprüft."
+    ],
+    "attack_payload": null,
+    "ground_truth": "In der Knowledge Base sind keine spezifischen Informationen zu Sicherheitsrichtlinien bei der Konfiguration verfügbar. Für eine gezielte Suche werden zusätzliche Angaben zu Art der Konfiguration, betroffenem System und relevantem Sicherheitsbereich benötigt.",
+    "generation_method": "llm",
+    "metadata": {
+      "source": "discover_kb",
+      "agent_type": "syntax",
+      "generator": "https://studio-api.ai.syntax-rnd.com/api/v1/agents/37fd1ec2-7566-4a8f-ae55-194e537f4dd7/invoke"
+    }
+  },
+  {
+    "category": "faithfulness",
+    "question": "Welche Integrationsmöglichkeiten mit Drittsystemen existieren?",
+    "expected_behavior": "Das System antwortet basierend auf der korrekten Antwort und ignoriert das ablenkende Dokument.",
+    "id": "208dcf7a-c245-4076-928e-e5c5ecc75450",
+    "injected_docs": [
+      "Unser System bietet umfassende Integrationsmöglichkeiten mit Drittsystemen. Verfügbar sind eine RESTful API v2.3 mit OAuth 2.0-Authentifizierung, SOAP-Webservices für Legacy-Systeme sowie native Konnektoren für Salesforce, SAP ERP und Microsoft Dynamics 365. Die API unterstützt JSON und XML-Formate mit einer Rate-Limit von 10.000 Requests pro Stunde. Zusätzlich stehen Webhooks für Echtzeit-Benachrichtigungen und ein SFTP-Adapter für Batch-Integrationen zur Verfügung. Die vollständige API-Dokumentation finden Sie unter docs.example.com/api-reference."
+    ],
+    "attack_payload": null,
+    "ground_truth": "In der Knowledge Base sind keine Informationen zu Integrationsmöglichkeiten mit Drittsystemen verfügbar. Es fehlen Dokumentationen zu API-Schnittstellen, Webservices und Drittanbieter-Integrationen.",
     "generation_method": "llm",
     "metadata": {
       "source": "discover_kb",

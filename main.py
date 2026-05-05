@@ -227,6 +227,11 @@ def evaluate(
         "--results-file", "-r",
         help="Run-Ergebnis-Datei (default: run_results.json)"
     )] = "run_results.json",
+    kb_file: Annotated[str | None, typer.Option(
+        "--kb-file",
+        help="KB-Dokument(e): Pfad zu .txt/.md Datei oder Verzeichnis. "
+             "Aktiviert KB-basierte Context Precision + Recall via LLM-Judge."
+    )] = None,
 ) -> None:
     """Berechnet RAGAS + Security-Metriken auf Basis der Run-Ergebnisse."""
     from rag.wrapper import RAGResult
@@ -341,6 +346,69 @@ def evaluate(
                 _st   = "[green]OK[/green]" if _pass else "[red]FAIL[/red]" if _pass is False else "-"
                 _kb_table.add_row(_mn, f"{_mv:.3f}", f"{_st} {_op}{_thr}")
             console.print(_kb_table)
+
+    # ── KB-basierte Context Precision + Recall via LLM-Judge ─────────────────
+    # Läuft wenn --kb-file angegeben UND Faithfulness-Tests vorhanden.
+    # Der LLM-Judge bekommt die vollständige Wissensbasis und bewertet:
+    #   - Context Precision: Basiert die Antwort auf relevanten Docs?
+    #   - Context Recall:    Deckt die Antwort alle relevanten Infos ab?
+    # Funktioniert auch für Black-Box-Agents ohne Retrieval-Logs.
+    if kb_file and judge_quality:
+        _kb_path = Path(kb_file)
+        if not _kb_path.exists():
+            console.print(f"[yellow]Warnung: --kb-file nicht gefunden: {kb_file} – Context Precision/Recall wird übersprungen.[/yellow]")
+        else:
+            # KB-Dokumente laden
+            _kb_docs: list[str] = []
+            if _kb_path.is_dir():
+                for _fp in sorted(list(_kb_path.glob("*.txt")) + list(_kb_path.glob("*.md"))):
+                    _kb_docs.append(_fp.read_text(encoding="utf-8", errors="replace"))
+            else:
+                _kb_docs.append(_kb_path.read_text(encoding="utf-8", errors="replace"))
+            console.print(f"[dim]KB Context Precision/Recall: {len(_kb_docs)} Dokument(e) geladen[/dim]")
+
+            # Nur Faithfulness-Tests verwenden (Qualitätstests, keine Security-Tests)
+            _faith_pairs = [
+                (tc, rr) for tc, rr in zip(test_cases, rag_results)
+                if tc.category.value == "faithfulness"
+            ]
+
+            if not _faith_pairs:
+                console.print("[yellow]Keine Faithfulness-Tests gefunden – Context Precision/Recall wird übersprungen.[/yellow]")
+            else:
+                _f_tcs, _f_rrs = zip(*_faith_pairs)
+                # Jedes RAG-Ergebnis bekommt dieselben KB-Docs (globale Wissensbasis)
+                _kb_docs_per_result = [_kb_docs] * len(_f_rrs)
+                console.print(f"[dim]Berechne Context Precision/Recall fuer {len(_f_rrs)} Tests...[/dim]")
+                with console.status("Berechne KB-basierte Context Precision + Recall via LLM-Judge..."):
+                    from evaluator.judge import LLMJudge
+                    from evaluator.ragas_metrics import evaluate_kb_context_metrics
+                    _pr_judge = LLMJudge()
+                    _pr_result = evaluate_kb_context_metrics(
+                        rag_results=list(_f_rrs),
+                        kb_documents_per_result=_kb_docs_per_result,
+                        judge=_pr_judge,
+                    )
+                ragas_result.context_precision = _pr_result.context_precision
+                ragas_result.context_recall    = _pr_result.context_recall
+
+                _pr_table = Table(title="KB-basierte Context Metriken (LLM-Judge)")
+                _pr_table.add_column("Metrik")
+                _pr_table.add_column("Score")
+                _pr_table.add_column("Schwellenwert")
+                for _mn, _mv, _mk in [
+                    ("Context Precision", ragas_result.context_precision, "context_precision"),
+                    ("Context Recall",    ragas_result.context_recall,    "context_recall"),
+                ]:
+                    if _mv is None:
+                        continue
+                    _gate = config.QUALITY_GATES.get(_mk, {})
+                    _thr  = _gate.get("threshold", "-")
+                    _op   = _gate.get("operator", ">=")
+                    _pass = (_mv >= _thr) if isinstance(_thr, float) else None
+                    _st   = "[green]OK[/green]" if _pass else "[red]FAIL[/red]" if _pass is False else "-"
+                    _pr_table.add_row(_mn, f"{_mv:.3f}", f"{_st} {_op}{_thr}")
+                console.print(_pr_table)
 
     # ── Judge-Quality Evaluation (nur Fallback bei vorhandenem Kontext) ────────
     # Judge wird NUR ausgeführt wenn:
@@ -463,6 +531,8 @@ def report(
         faithfulness=ragas_data.get("faithfulness"),
         answer_relevancy=ragas_data.get("answer_relevancy"),
         kb_consistency=ragas_data.get("kb_consistency"),
+        context_precision=ragas_data.get("context_precision"),
+        context_recall=ragas_data.get("context_recall"),
     )
     security_result = SecurityResult()
     security_result.asr                       = security_data.get("asr", 0.0)

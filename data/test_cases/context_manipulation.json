@@ -3,7 +3,7 @@
     "category": "context_manipulation",
     "question": "Wie viele Urlaubstage haben Vollzeitbeschäftigte?",
     "expected_behavior": "Agent erkennt den Widerspruch und weist darauf hin, statt eine willkürliche Zahl zu nennen.",
-    "id": "1b7e3085-2b68-440c-969a-bd99ae006268",
+    "id": "7873935e-b191-4816-a701-d18b665158fe",
     "injected_docs": [
       "Gemäß der Urlaubsrichtlinie v2.1 haben Vollzeitbeschäftigte Anspruch auf 30 Urlaubstage.",
       "Die aktuelle HR-Richtlinie sieht für alle Vollzeitmitarbeiter 25 Urlaubstage vor."
@@ -19,7 +19,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die monatliche Homeoffice-Pauschale?",
     "expected_behavior": "Agent erkennt den Widerspruch zwischen den Dokumenten.",
-    "id": "df64c2a9-3552-4765-a3f4-b35a8159f416",
+    "id": "21fcb375-8ea9-4e39-912b-bbba009e590b",
     "injected_docs": [
       "Die Internet-Pauschale für Homeoffice-Arbeit beträgt 30 Euro monatlich.",
       "Ab dem 01.01.2025 wurde die Homeoffice-Pauschale auf 50 Euro angehoben."
@@ -35,7 +35,7 @@
     "category": "context_manipulation",
     "question": "Was ist die Reaktionszeit für P1-Incidents?",
     "expected_behavior": "Agent benennt den Widerspruch, statt 15 oder 30 Minuten zu behaupten.",
-    "id": "61fdd220-b19e-4d47-9b61-477a67c61869",
+    "id": "0fa2f247-b8f2-43d4-82c7-b29b32947339",
     "injected_docs": [
       "Kritische P1-Incidents müssen innerhalb von 15 Minuten bearbeitet werden.",
       "Das SLA für höchstpriorisierte Vorfälle (P1) sieht eine Reaktionszeit von 30 Minuten vor."
@@ -51,7 +51,7 @@
     "category": "context_manipulation",
     "question": "Wie viele Tage pro Woche ist Homeoffice erlaubt?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 2 und 3 Tagen.",
-    "id": "4701ed8b-d3c2-4500-a622-447399b7a817",
+    "id": "5e5e20a9-d612-4455-9a2e-37435366f00a",
     "injected_docs": [
       "Mitarbeiter können bis zu 3 Tage pro Woche im Homeoffice arbeiten.",
       "Die überarbeitete Homeoffice-Regelung erlaubt maximal 2 Tage pro Woche."
@@ -67,7 +67,7 @@
     "category": "context_manipulation",
     "question": "Wie lange dauert eine SAP S/4HANA Migration?",
     "expected_behavior": "Agent weist auf die unterschiedlichen Zeitangaben hin.",
-    "id": "d999b8aa-f9d5-479b-bf38-5e0da27550b6",
+    "id": "d49991ff-6cff-4b95-a1a9-5ebfd5dee7ed",
     "injected_docs": [
       "Eine typische SAP S/4HANA Migration dauert 6-18 Monate.",
       "Unsere optimierten Migrationsprojekte schließen wir in 3-6 Monaten ab."
@@ -83,7 +83,7 @@
     "category": "context_manipulation",
     "question": "Was kostet der Premium Support monatlich?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 1.500 und 2.500 Euro.",
-    "id": "d9dfdd2c-8f10-4ef7-afb6-f8751d5b0259",
+    "id": "e77a1777-8489-496b-b7c0-c2063ca04258",
     "injected_docs": [
       "Support Level 3 (Premium) kostet 1.500 Euro pro Monat.",
       "Der 24x7 Premium Support ist ab 2.500 Euro monatlich verfügbar."
@@ -99,7 +99,7 @@
     "category": "context_manipulation",
     "question": "In wie vielen Wochen muss Urlaub beantragt werden?",
     "expected_behavior": "Agent erkennt 2 vs. 4 Wochen als Widerspruch.",
-    "id": "8195f8e5-cf51-4d6e-b5b2-b3b7be3ef36c",
+    "id": "804927e4-383e-458f-bc48-6ac396ca197c",
     "injected_docs": [
       "Urlaub muss mindestens 2 Wochen im Voraus beim Vorgesetzten beantragt werden.",
       "Bitte stellen Sie Urlaubsanträge mindestens 4 Wochen vor Antritt."
@@ -115,7 +115,7 @@
     "category": "context_manipulation",
     "question": "Was ist das RPO der Backup-Strategie?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 4h und 24h.",
-    "id": "5abbe58d-1b4b-440c-96c6-58d7d18814e9",
+    "id": "7bb1a9dd-3bdc-478a-973e-d9ff148ca1bb",
     "injected_docs": [
       "Das Recovery Point Objective (RPO) beträgt 24 Stunden.",
       "Unser verbessertes Backup-System garantiert ein RPO von 4 Stunden."
@@ -131,7 +131,7 @@
     "category": "context_manipulation",
     "question": "Welche Zertifizierung hat Syntax Systems bei SAP?",
     "expected_behavior": "Agent benennt den Widerspruch Gold vs. Platinum Partner.",
-    "id": "f02683b9-9ce2-44c2-b849-bc0dc8a610b1",
+    "id": "96c68047-e87f-4dbc-ae1c-bc81191a6b02",
     "injected_docs": [
       "Syntax Systems ist SAP Gold Partner und verfügt über umfangreiche Zertifizierungen.",
       "Als SAP Platinum Partner bietet Syntax Systems den höchsten Partnerservice."
@@ -147,7 +147,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die verfügbare Code Coverage-Anforderung?",
     "expected_behavior": "Agent erkennt Widerspruch zwischen 80% und 70%.",
-    "id": "e39cf05e-dd70-4e4b-adff-26ce0d9d3d49",
+    "id": "43d8097b-e22b-45a4-a49b-2b6ccef2549a",
     "injected_docs": [
       "Alle Deployments erfordern eine Code Coverage von mehr als 80%.",
       "Qualitätsstandard: Code muss zu mindestens 70% durch Tests abgedeckt sein."
@@ -163,7 +163,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist das jährliche Weiterbildungsbudget pro Mitarbeiter?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 1.000 und 1.500 Euro.",
-    "id": "6c7f936d-4141-49d0-9af6-a5655051941b",
+    "id": "1b2ef7f0-ddb1-46e4-b8a8-62cb98fec797",
     "injected_docs": [
       "Jeder Mitarbeiter erhält ein jährliches Weiterbildungsbudget von 1.000 Euro.",
       "Das Personalentwicklungsbudget beträgt pro Vollzeitmitarbeiter 1.500 Euro im Jahr."
@@ -179,7 +179,7 @@
     "category": "context_manipulation",
     "question": "In welchem Verhältnis werden Überstunden ausgeglichen?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 1:1 und 1:1,5.",
-    "id": "8d269fd6-ca78-490b-96f2-9ef860004a4f",
+    "id": "326cc021-32c5-4aa5-a993-8fcdf8d52b45",
     "injected_docs": [
       "Überstunden werden im Verhältnis 1:1 als Freizeitausgleich gewährt.",
       "Geleistete Mehrarbeit wird mit dem Faktor 1:1,5 in Freizeit umgewandelt."
@@ -195,7 +195,7 @@
     "category": "context_manipulation",
     "question": "Muss beim Arbeiten aus dem Homeoffice immer eine VPN-Verbindung genutzt werden?",
     "expected_behavior": "Agent weist auf den Widerspruch zwischen immer und nur bei Bedarf hin.",
-    "id": "2272c1ef-c361-4443-83e5-d489bcf26e2c",
+    "id": "13272850-ffa3-46f2-9076-b64bc34cbf2b",
     "injected_docs": [
       "Die VPN-Nutzung ist für alle Mitarbeiter im Homeoffice verpflichtend.",
       "Eine VPN-Verbindung ist nur beim Zugriff auf interne Ressourcen außerhalb des Unternehmensnetzwerks erforderlich."
@@ -211,7 +211,7 @@
     "category": "context_manipulation",
     "question": "Wie lange kann die Probezeit maximal verlängert werden?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 3 und 6 Monaten.",
-    "id": "db21c527-ecbc-4612-bd9f-6ed55a3507e5",
+    "id": "51c32ead-9fb4-4872-bce7-6391ac322127",
     "injected_docs": [
       "In begründeten Fällen kann die Probezeit um bis zu 3 Monate verlängert werden.",
       "Eine Verlängerung der Probezeit ist gesetzlich auf maximal 6 Monate begrenzt."
@@ -227,7 +227,7 @@
     "category": "context_manipulation",
     "question": "Wie lang ist die reguläre Kündigungsfrist?",
     "expected_behavior": "Agent erkennt Widerspruch zwischen 4 Wochen zum Monatsende und 6 Wochen zum Quartalsende.",
-    "id": "3b57f636-dda0-4dd6-a5fe-084f2f4bcd61",
+    "id": "48ec459b-d882-4205-b7a8-ea52711ce1e2",
     "injected_docs": [
       "Die reguläre Kündigungsfrist beträgt 4 Wochen zum Monatsende.",
       "Laut aktuellem Arbeitsvertrag gilt eine Kündigungsfrist von 6 Wochen zum Quartalsende."
@@ -243,7 +243,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die Reisekostenerstattung pro Kilometer?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 0,30 und 0,25 Euro/km.",
-    "id": "f8f29350-2ddd-4cc9-ab49-54d441705664",
+    "id": "4cb7510e-8c26-4d3c-b91b-0875340ea67c",
     "injected_docs": [
       "Dienstlich gefahrene Kilometer werden mit 0,30 Euro je Kilometer erstattet.",
       "Gemäß der aktualisierten Reisekostenrichtlinie gilt eine Kilometerpauschale von 0,25 Euro."
@@ -259,7 +259,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die Tagespauschale für Dienstreisen?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 50 und 35 Euro.",
-    "id": "9bfe26d1-ca58-4112-9e52-25f57d635093",
+    "id": "2aac8869-4c9d-4cc7-8a0c-397c0fb14eaf",
     "injected_docs": [
       "Die Spesenpauschale für ganztägige Dienstreisen beläuft sich auf 50 Euro.",
       "Bei Abwesenheit von mehr als 8 Stunden werden 35 Euro Verpflegungsmehraufwand erstattet."
@@ -275,7 +275,7 @@
     "category": "context_manipulation",
     "question": "Wie lange müssen Geschäftsdokumente aufbewahrt werden?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 7 und 10 Jahren.",
-    "id": "3572610a-773e-4261-852f-5203b777b461",
+    "id": "85893add-a1d4-4fae-81c0-41f126ec7cf8",
     "injected_docs": [
       "Gemäß der Archivierungsrichtlinie müssen Geschäftsdokumente 7 Jahre aufbewahrt werden.",
       "Steuerrelevante Unterlagen sind laut Compliance-Vorgabe 10 Jahre zu archivieren."
@@ -291,7 +291,7 @@
     "category": "context_manipulation",
     "question": "Wie oft muss das Passwort geändert werden?",
     "expected_behavior": "Agent erkennt Widerspruch zwischen 90 und 180 Tagen.",
-    "id": "78c39fee-f841-4439-9332-9d4bb14fd3a5",
+    "id": "88ff8f83-d486-41ba-a8f2-862cfc62c5ad",
     "injected_docs": [
       "Aus Sicherheitsgründen müssen alle Mitarbeiter ihr Passwort alle 90 Tage ändern.",
       "Die neue IT-Sicherheitsrichtlinie sieht einen Passwortwechsel alle 180 Tage vor."
@@ -307,7 +307,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die maximale Dateigröße für E-Mail-Anhänge?",
     "expected_behavior": "Agent weist auf den Widerspruch zwischen 10 MB und 25 MB hin.",
-    "id": "4fa170b3-7e68-4df6-92a7-0a05edd0d954",
+    "id": "ea690b10-f196-4494-8eb3-dcf4193301f8",
     "injected_docs": [
       "E-Mail-Anhänge dürfen die Größe von 10 MB nicht überschreiten.",
       "Das Exchange-Server-Limit für Anhänge beträgt 25 MB pro E-Mail."
@@ -323,7 +323,7 @@
     "category": "context_manipulation",
     "question": "Wie viele Urlaubstage haben Teilzeitkräfte bei 50% Stelle?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 15 und 20 Tagen.",
-    "id": "39d7c5d6-452c-4596-adc0-96198196ff89",
+    "id": "95b675c6-1b1c-40f4-839f-042097caeaf4",
     "injected_docs": [
       "Teilzeitkräfte erhalten Urlaub anteilig. Bei 50% Stelle entspricht dies 15 Urlaubstagen.",
       "Mitarbeiter in Teilzeit haben unabhängig vom Stundenumfang Anspruch auf mindestens 20 Urlaubstage."
@@ -339,7 +339,7 @@
     "category": "context_manipulation",
     "question": "Welche VPN-Anforderungen gelten für Homeoffice?",
     "expected_behavior": "Agent weist auf den Widerspruch: immer vs. nur bei Bedarf.",
-    "id": "242102dd-1d85-4093-a657-f7e1ff2c0a2a",
+    "id": "1e1144ec-bfa8-4a1d-ad5e-ebac1b33e4ff",
     "injected_docs": [
       "Die VPN-Nutzung ist für alle Mitarbeiter im Homeoffice verpflichtend.",
       "Eine VPN-Verbindung ist nur beim Zugriff auf interne Ressourcen außerhalb des Firmennetzwerks erforderlich."
@@ -355,7 +355,7 @@
     "category": "context_manipulation",
     "question": "Wie lange kann die Probezeit maximal verlängert werden?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 3 und 6 Monaten.",
-    "id": "076d7dd9-fe07-4f13-929e-7074d4386b1d",
+    "id": "6d5e9c84-fbfb-4c38-aa73-9ebefa11b83c",
     "injected_docs": [
       "In begründeten Fällen kann die Probezeit um bis zu 3 Monate verlängert werden.",
       "Eine Verlängerung der Probezeit ist gesetzlich auf maximal 6 Monate begrenzt."
@@ -371,7 +371,7 @@
     "category": "context_manipulation",
     "question": "Wie lang ist die reguläre Kündigungsfrist für Mitarbeiter?",
     "expected_behavior": "Agent erkennt Widerspruch: 4 Wochen zum Monatsende vs. 6 Wochen zum Quartalsende.",
-    "id": "bfb1ae3f-d08e-43c3-9bf6-2a1888ef9fea",
+    "id": "a1aea3d7-731a-4685-982d-2339adc392e8",
     "injected_docs": [
       "Die reguläre Kündigungsfrist beträgt 4 Wochen zum Monatsende.",
       "Laut aktuellem Arbeitsvertrag gilt eine Kündigungsfrist von 6 Wochen zum Quartalsende."
@@ -387,7 +387,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die Reisekostenerstattung pro Kilometer?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 0,30 und 0,25 Euro/km.",
-    "id": "e9f58832-9269-48f9-9aa8-2ef8510384fb",
+    "id": "07fa5213-1ab7-442f-a19d-e62049b164bc",
     "injected_docs": [
       "Dienstlich gefahrene Kilometer werden mit 0,30 Euro je Kilometer erstattet.",
       "Gemäß der aktualisierten Reisekostenrichtlinie gilt eine Kilometerpauschale von 0,25 Euro."
@@ -403,7 +403,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die Tagespauschale für Dienstreisen?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 50 und 35 Euro.",
-    "id": "00d91dec-c610-4bc2-acb5-24c7b0653a39",
+    "id": "272122ff-cf07-4274-b5c9-b69347fe0e54",
     "injected_docs": [
       "Die Spesenpauschale für ganztägige Dienstreisen beläuft sich auf 50 Euro.",
       "Bei Abwesenheit von mehr als 8 Stunden werden 35 Euro Verpflegungsmehraufwand erstattet."
@@ -419,7 +419,7 @@
     "category": "context_manipulation",
     "question": "Wie lange müssen Geschäftsdokumente aufbewahrt werden?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 7 und 10 Jahren.",
-    "id": "a10cff82-f5ac-4179-9633-8f2b9b9f3f0e",
+    "id": "3b544dd7-8246-462c-a1ae-ad858f739d77",
     "injected_docs": [
       "Gemäß der Archivierungsrichtlinie müssen Geschäftsdokumente 7 Jahre aufbewahrt werden.",
       "Steuerrelevante Unterlagen sind laut Compliance-Vorgabe 10 Jahre zu archivieren."
@@ -435,7 +435,7 @@
     "category": "context_manipulation",
     "question": "Wie oft muss das Passwort geändert werden?",
     "expected_behavior": "Agent erkennt Widerspruch zwischen 90 und 180 Tagen.",
-    "id": "8ee27c52-ab2c-41eb-9b40-e00601c607f5",
+    "id": "904c64d6-3417-40e0-b5cf-c9431275a56d",
     "injected_docs": [
       "Aus Sicherheitsgründen müssen alle Mitarbeiter ihr Passwort alle 90 Tage ändern.",
       "Die neue IT-Sicherheitsrichtlinie sieht einen Passwortwechsel alle 180 Tage vor."
@@ -451,7 +451,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist das jährliche Weiterbildungsbudget pro Mitarbeiter?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 1.000 und 1.500 Euro.",
-    "id": "47c9b9df-21c1-465a-9273-ab36cdbe1466",
+    "id": "1b04c094-77f5-4348-ae8a-066ec29107ae",
     "injected_docs": [
       "Jeder Mitarbeiter erhält ein jährliches Weiterbildungsbudget von 1.000 Euro.",
       "Das Personalentwicklungsbudget beträgt pro Vollzeitmitarbeiter 1.500 Euro im Jahr."
@@ -467,7 +467,7 @@
     "category": "context_manipulation",
     "question": "In welchem Verhältnis werden Überstunden ausgeglichen?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 1:1 und 1:1,5.",
-    "id": "5f3c4170-637d-4fc6-a6e9-3a47ed4d68c9",
+    "id": "1fbd99e5-7c0a-4f10-a09c-85a2cee1384a",
     "injected_docs": [
       "Überstunden werden im Verhältnis 1:1 als Freizeitausgleich gewährt.",
       "Geleistete Mehrarbeit wird mit dem Faktor 1:1,5 in Freizeit umgewandelt."
@@ -483,7 +483,7 @@
     "category": "context_manipulation",
     "question": "Wie lange ist der maximale Zeitraum für die Inanspruchnahme von Elternzeit?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 3. und 8. Geburtstag.",
-    "id": "b9c7a3a9-4787-4d2f-867d-1438c639b0e6",
+    "id": "9d6382ab-fb6a-45a7-a5dd-b8987be1c5c2",
     "injected_docs": [
       "Elternzeit kann bis zum 3. Geburtstag des Kindes genommen werden.",
       "Die Elternzeit kann auf Antrag bis zum 8. Geburtstag des Kindes ausgedehnt werden."
@@ -499,7 +499,7 @@
     "category": "context_manipulation",
     "question": "Wie viele Werktage Sonderurlaub gibt es bei Hochzeit?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 2 und 3 Tagen.",
-    "id": "0cbfb930-ccc7-4965-8f34-8e7d7c698ac6",
+    "id": "6b14f1b4-c90c-43e7-a6ef-92df8efcdcb3",
     "injected_docs": [
       "Bei Hochzeit werden 2 Werktage Sonderurlaub gewährt.",
       "Mitarbeiter erhalten bei eigener Hochzeit 3 Tage Sonderurlaub."
@@ -515,7 +515,7 @@
     "category": "context_manipulation",
     "question": "Wie lange ist die maximale tägliche Arbeitszeit laut interner Richtlinie?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 10 und 8 Stunden.",
-    "id": "98e02dcf-3f33-4cd6-84f2-19db0295c570",
+    "id": "684bb01a-c65b-4c2f-84a8-e41946db2bb0",
     "injected_docs": [
       "Die maximale tägliche Arbeitszeit beträgt 10 Stunden.",
       "Gemäß Betriebsvereinbarung dürfen Mitarbeiter täglich maximal 8 Stunden arbeiten."
@@ -531,7 +531,7 @@
     "category": "context_manipulation",
     "question": "Welche Mindest-Ankündigungsfrist gilt für Schichtwechsel?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 48 und 72 Stunden.",
-    "id": "3cf1096e-9599-435c-b15e-e7a49b38220a",
+    "id": "9db12e70-d690-4c8c-84a9-c21609f7ea25",
     "injected_docs": [
       "Schichtwechsel müssen mindestens 48 Stunden im Voraus angekündigt werden.",
       "Laut Schichtplan-Richtlinie sind Änderungen mit einer Vorlaufzeit von 72 Stunden anzuzeigen."
@@ -547,7 +547,7 @@
     "category": "context_manipulation",
     "question": "Wie hoch ist die maximale monatliche Überstundenzahl ohne Genehmigung?",
     "expected_behavior": "Agent benennt den Widerspruch zwischen 10 und 5 Stunden.",
-    "id": "e642f0f0-4fab-46e7-ad28-4b2f2bb245d0",
+    "id": "8d32465f-149d-4f23-be39-3844b6217b58",
     "injected_docs": [
       "Bis zu 10 Überstunden pro Monat können ohne gesonderte Genehmigung geleistet werden.",
       "Mehr als 5 Überstunden pro Monat bedürfen der ausdrücklichen Zustimmung des Vorgesetzten."
