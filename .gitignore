@@ -7,5 +7,4 @@ data/results/
 data/kb_docs/
 *.egg-info/
 .pytest_cache/
-.claude/
-CLAUDE.md
+
