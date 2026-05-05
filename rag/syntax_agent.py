@@ -442,3 +442,4 @@ def get_wrapper() -> "SyntaxAgentWrapper | object":
     if config.RAG_TARGET == "syntax":
         return SyntaxAgentWrapper()
     return RAGPipelineWrapper()
+

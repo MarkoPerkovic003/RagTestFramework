@@ -194,3 +194,4 @@ class GenericHTTPAgentWrapper(BaseAgentWrapper):
             contexts=contexts,
             metadata={"source": "generic_http", **(extra_metadata or {})},
         )
+

@@ -89,3 +89,4 @@ class QualityGateEvaluator:
             failures=failures,
             metrics=metrics,
         )
+

@@ -592,3 +592,4 @@ class AgentKBDiscovery:
             return data.get("output", "").strip() or None
         except Exception:
             return None
+

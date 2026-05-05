@@ -153,3 +153,4 @@ class AzureOpenAIAgentWrapper(BaseAgentWrapper):
             contexts=contexts,
             metadata={"source": "azure_openai", **(extra_metadata or {})},
         )
+

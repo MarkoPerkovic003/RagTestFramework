@@ -57,3 +57,4 @@ class BaseAgentWrapper(ABC):
             return bool(result.answer.strip())
         except Exception:
             return False
+

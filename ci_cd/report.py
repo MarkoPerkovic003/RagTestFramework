@@ -215,3 +215,4 @@ class ReportGenerator:
             f.write(html)
 
         return {"json": json_path, "html": html_path}
+

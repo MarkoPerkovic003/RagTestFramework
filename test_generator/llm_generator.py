@@ -244,3 +244,4 @@ class LLMTestCaseGenerator:
             return data.get("output", "").strip() or None
         except Exception:
             return None
+

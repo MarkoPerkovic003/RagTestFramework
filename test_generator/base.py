@@ -91,3 +91,4 @@ class BaseTestCaseGenerator:
         with open(json_file, encoding="utf-8") as f:
             data = json.load(f)
         return [TestCase.from_dict(d) for d in data]
+

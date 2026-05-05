@@ -86,3 +86,4 @@ TESTCASES_PER_CATEGORY = {
 }
 # Aufteilung: 70% Template-basiert, 30% LLM-generiert
 TEMPLATE_RATIO = 0.70
+

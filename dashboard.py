@@ -761,3 +761,4 @@ with tab_reports:
     if st.button("🔄 Daten neu laden", use_container_width=False):
         st.cache_data.clear()
         st.rerun()
+

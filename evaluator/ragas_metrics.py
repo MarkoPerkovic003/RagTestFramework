@@ -238,3 +238,4 @@ def evaluate_kb_context_metrics(
         context_precision=round(sum(precision_scores) / len(precision_scores), 4) if precision_scores else None,
         context_recall=round(sum(recall_scores) / len(recall_scores), 4) if recall_scores else None,
     )
+

@@ -110,3 +110,4 @@ class RAGPipelineWrapper(BaseAgentWrapper):
     ) -> "RAGPipelineWrapper":
         """Factory für Tests mit injizierten Dokumenten."""
         return cls(system_prompt=system_prompt, inject_docs=inject_docs)
+

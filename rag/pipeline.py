@@ -106,3 +106,4 @@ def load_existing_vectorstore() -> Chroma:
         persist_directory=str(config.CHROMA_DIR),
         embedding_function=embeddings,
     )
+

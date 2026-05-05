@@ -226,3 +226,4 @@ class CopilotStudioAgentWrapper(BaseAgentWrapper):
         # (selten, aber manche Bots schicken Quellen als suggested actions)
 
         return citations
+
